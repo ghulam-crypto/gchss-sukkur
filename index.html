@@ -1,0 +1,1329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- ═══════════════════════════════════════════════════ -->
+    <!-- SEO META TAGS                                        -->
+    <!-- ═══════════════════════════════════════════════════ -->
+    <title>Govt. Comprehensive Higher Secondary School Sukkur | GCHSS</title>
+    <meta name="description" content="Official portal of Govt. Comprehensive Higher Secondary School Sukkur (SEMIS: 418050146). Student results, attendance, ID cards, STEM Lab, admissions and more.">
+    <meta name="keywords" content="Govt Comprehensive HSS Sukkur, GCHSS, school Sukkur, student result, SEMIS 418050146, higher secondary Sukkur, Sindh school">
+    <meta name="author" content="Ghulam Mehdi Junejo">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://gchss-sukkur.vercel.app/">
+
+    <!-- Open Graph (WhatsApp, Facebook preview) -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Govt. Comprehensive HSS Sukkur">
+    <meta property="og:description" content="Official school portal — results, attendance, STEM lab and more.">
+    <meta property="og:image" content="https://lh3.googleusercontent.com/d/1jnNNiAc2-DZUtVkABXetBkMGqB0olPju">
+    <meta property="og:url" content="https://gchss-sukkur.vercel.app/">
+    <meta name="twitter:card" content="summary_large_image">
+
+    <!-- ═══════════════════════════════════════════════════ -->
+    <!-- STRUCTURED DATA (Google Knowledge Panel)            -->
+    <!-- ═══════════════════════════════════════════════════ -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "EducationalOrganization",
+      "name": "Govt. Comprehensive Higher Secondary School Sukkur",
+      "alternateName": "GCHSS Sukkur",
+      "url": "https://gchss-sukkur.vercel.app",
+      "logo": "https://lh3.googleusercontent.com/d/1jnNNiAc2-DZUtVkABXetBkMGqB0olPju",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "Board Office Road, Makha Goth",
+        "addressLocality": "Sukkur",
+        "addressRegion": "Sindh",
+        "addressCountry": "PK"
+      },
+      "identifier": "SEMIS-418050146",
+      "telephone": "",
+      "description": "Government Comprehensive Higher Secondary School Sukkur offering Pre-Medical, Pre-Engineering and Computer Science programs."
+    }
+    </script>
+
+    <!-- PERFORMANCE: preconnect to external resources -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdn.tailwindcss.com">
+
+    <!-- Fonts: only what's needed -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&family=Dancing+Script:wght@700&family=Libre+Barcode+39+Text&display=swap" rel="stylesheet">
+
+    <!-- Tailwind (CDN for quick deploy — swap to local build for production) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Icons (defer to not block render) -->
+    <script defer src="https://unpkg.com/lucide@latest"></script>
+    <script defer src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <!-- Chart.js (lazy-loaded when needed) -->
+    <script defer src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        :root {
+            --school-green: #1a3c2e;
+            --school-gold:  #f59e0b;
+        }
+        body { font-family: 'Outfit', 'Segoe UI', sans-serif; background: #f3f4f6; }
+
+        /* ─── Utility ─────────────────────────────────────── */
+        .hidden        { display: none !important; }
+        .watermark     { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%) rotate(-45deg); opacity:.06; pointer-events:none; font-size:4rem; font-weight:900; color:#166534; white-space:nowrap; z-index:0; }
+        .font-id-body  { font-family: 'Outfit', sans-serif; }
+        .font-signature{ font-family: 'Dancing Script', cursive; }
+        .font-barcode  { font-family: 'Libre Barcode 39 Text', cursive; font-size:48px; }
+
+        /* ─── Header Slideshow ────────────────────────────── */
+        .slide         { display:none; animation: fade 1.5s; }
+        .slide.active  { display:block; }
+        @keyframes fade { from{opacity:.4} to{opacity:1} }
+
+        /* ─── Background ──────────────────────────────────── */
+        #bg-slideshow { position:fixed; inset:0; z-index:-10; overflow:hidden; background:#f3f4f6; }
+        .bg-slide     { position:absolute; inset:0; background-size:cover; background-position:center; opacity:0; transform:scale(1.08); transition:opacity 1.5s ease; }
+        .bg-slide.active { opacity:1; animation: zoomInOut 12s ease-in-out forwards; }
+        @keyframes zoomInOut { 0%{transform:scale(1.08)} 50%{transform:scale(1)} 100%{transform:scale(1.06)} }
+        #bg-overlay   { position:fixed; inset:0; background:rgba(243,244,246,.88); z-index:-9; }
+
+        /* ─── Blockchain badge ────────────────────────────── */
+        .chain-badge   { display:inline-flex; align-items:center; gap:4px; background:linear-gradient(135deg,#6366f1,#8b5cf6); color:#fff; font-size:10px; font-weight:700; padding:2px 8px; border-radius:999px; letter-spacing:.05em; }
+        .chain-badge::before { content:'⬡'; font-size:12px; }
+
+        /* ─── Supra verify button ─────────────────────────── */
+        .supra-verify  { background:linear-gradient(135deg,#4f46e5,#7c3aed); color:#fff; border:none; border-radius:8px; padding:6px 14px; font-size:11px; font-weight:700; cursor:pointer; transition:opacity .2s; }
+        .supra-verify:hover { opacity:.85; }
+
+        /* ─── Toast ───────────────────────────────────────── */
+        #toast { position:fixed; bottom:24px; right:24px; z-index:9999; transition:all .3s; }
+        .toast-msg { background:#1f2937; color:#fff; padding:12px 20px; border-radius:10px; font-size:13px; margin-top:8px; box-shadow:0 4px 12px rgba(0,0,0,.3); }
+        .toast-msg.success { border-left:4px solid #22c55e; }
+        .toast-msg.error   { border-left:4px solid #ef4444; }
+
+        /* ─── Print ───────────────────────────────────────── */
+        @media print {
+            body * { visibility:hidden; }
+            #bg-slideshow, #bg-overlay, header, footer, .no-print { display:none !important; }
+            .print-now, .print-now * { visibility:visible; }
+            .print-now { position:absolute; left:0; top:0; width:100%; margin:0; padding:0; background:white; z-index:9999; }
+            * { -webkit-print-color-adjust:exact !important; print-color-adjust:exact !important; }
+            #gazette-output table { width:100% !important; font-size:10px; }
+            #gazette-output th, #gazette-output td { padding:4px; border:1px solid black; }
+        }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen">
+
+    <!-- Background -->
+    <div id="bg-slideshow" aria-hidden="true"></div>
+    <div id="bg-overlay"   aria-hidden="true"></div>
+
+    <!-- Toast container -->
+    <div id="toast" aria-live="polite"></div>
+
+    <!-- ══════════════════════════════════════════════════════ -->
+    <!-- HEADER                                                  -->
+    <!-- ══════════════════════════════════════════════════════ -->
+    <header class="bg-green-900 text-white shadow-xl sticky top-0 z-50 no-print" role="banner">
+        <div class="container mx-auto px-4 py-3">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+                <div class="flex items-center space-x-4 cursor-pointer" onclick="showSection('home')" aria-label="Go to homepage">
+                    <div class="bg-white p-2 rounded-full shadow-lg">
+                        <img src="https://lh3.googleusercontent.com/d/1jnNNiAc2-DZUtVkABXetBkMGqB0olPju"
+                             class="w-10 h-10 rounded-full" alt="GCHSS Sukkur Logo" width="40" height="40" loading="eager">
+                    </div>
+                    <div>
+                        <h1 class="text-xl md:text-2xl font-bold uppercase tracking-wide">Govt. Comprehensive</h1>
+                        <p  class="text-sm md:text-base text-green-200 font-semibold">Higher Secondary School Sukkur</p>
+                        <div class="text-xs text-green-300 mt-1 flex flex-wrap gap-3">
+                            <span>📍 Board Office Road, Makha Goth</span>
+                            <span class="bg-green-800 px-2 rounded">SEMIS: 418050146</span>
+                            <span class="chain-badge">Supra Secured</span>
+                        </div>
+                    </div>
+                </div>
+                <nav class="flex flex-wrap gap-2 text-xs md:text-sm font-bold mt-2 md:mt-0" aria-label="Main navigation">
+                    <button onclick="showSection('home')"     class="hover:text-yellow-400 text-white transition">Home</button>
+                    <a      href="stem/index.html"            class="hover:text-yellow-400 text-white transition flex items-center" aria-label="STEM Lab">
+                        <i data-lucide="flask-conical" class="w-4 h-4 mr-1" aria-hidden="true"></i> STEM Lab
+                    </a>
+                    <button onclick="showSection('gallery')"  class="hover:text-yellow-400 text-white transition">Gallery</button>
+                    <button onclick="showSection('academics')" class="hover:text-yellow-400 text-white transition">Academics</button>
+                    <button onclick="openLoginModal()" id="btn-login"
+                            class="bg-yellow-500 text-black px-3 py-1 rounded hover:bg-yellow-400 transition">Login</button>
+                    <button onclick="doLogout()" id="btn-logout"
+                            class="hidden bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700 transition">Logout</button>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- ══════════════════════════════════════════════════════ -->
+    <!-- MAIN CONTENT                                            -->
+    <!-- ══════════════════════════════════════════════════════ -->
+    <main class="flex-grow container mx-auto px-4 py-6 relative z-10" id="main-content">
+
+        <!-- ─── HOME ──────────────────────────────────────── -->
+        <section id="section-home" class="page-section space-y-8" aria-label="Home">
+
+            <!-- Hero Slideshow -->
+            <div class="relative h-64 md:h-96 rounded-2xl overflow-hidden shadow-2xl border-b-4 border-green-600" role="img" aria-label="School photos">
+                <img src="https://lh3.googleusercontent.com/d/1CNhh5MMo1Ks07LEUQvddU5kasZGYjYif" class="slide active w-full h-full object-cover" alt="School building" loading="eager" width="1200" height="400">
+                <img src="https://lh3.googleusercontent.com/d/15wbNoMTWczFgAP9j5BobBryp6l9supvX" class="slide w-full h-full object-cover" alt="Students" loading="lazy" width="1200" height="400">
+                <img src="https://lh3.googleusercontent.com/d/1diwpdDpgkiJQ7YZzDlk9WXUv2GOP0f84" class="slide w-full h-full object-cover" alt="Classroom" loading="lazy" width="1200" height="400">
+                <img src="https://lh3.googleusercontent.com/d/1pzGInepUMFbZ3ePsGp0SkLQy0hPi2OAV" class="slide w-full h-full object-cover" alt="Event" loading="lazy" width="1200" height="400">
+                <img src="https://lh3.googleusercontent.com/d/19G2MWRjeVaRoszZwAWh_YvQjkOLAAHCw" class="slide w-full h-full object-cover" alt="Activities" loading="lazy" width="1200" height="400">
+                <img src="https://lh3.googleusercontent.com/d/1hNQcgS7Jee97zWe9sLoPD-XO9jaFhNYN" class="slide w-full h-full object-cover" alt="Campus" loading="lazy" width="1200" height="400">
+                <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex items-end p-8">
+                    <h2 class="text-white text-3xl font-bold">Empowering Future Generations</h2>
+                </div>
+            </div>
+
+            <!-- Wall of Fame -->
+            <div class="bg-gradient-to-r from-yellow-50 to-orange-50 p-6 rounded-xl shadow-lg border border-yellow-200 relative overflow-hidden" aria-label="Top students">
+                <div class="absolute top-0 right-0 p-4 opacity-10 text-yellow-600" aria-hidden="true"><i class="ph-fill ph-trophy text-9xl"></i></div>
+                <h3 class="font-bold text-2xl text-yellow-800 mb-2 flex items-center border-b border-yellow-200 pb-2">
+                    <i class="ph-fill ph-star text-yellow-500 mr-2" aria-hidden="true"></i> Wall of Fame
+                    <span class="ml-3 chain-badge">Results on Supra Chain</span>
+                </h3>
+                <p class="text-xs text-yellow-700 mb-4">Student results are cryptographically recorded on Supra blockchain — tamper-proof forever.</p>
+                <div id="school-toppers-container" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <p class="text-gray-500 animate-pulse col-span-3">Loading top students...</p>
+                </div>
+            </div>
+
+            <!-- Attendance Charts -->
+            <div class="bg-white p-4 rounded-xl shadow-md border border-gray-100">
+                <h3 class="font-bold text-gray-700 mb-4 px-2 border-b flex items-center">
+                    <i data-lucide="bar-chart-2" class="w-5 h-5 mr-2 text-green-700" aria-hidden="true"></i> Daily Attendance
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-green-50 rounded-xl p-4 flex items-center shadow-sm border border-green-100">
+                        <div class="w-1/3 relative h-24"><canvas id="studentChart" aria-label="Student attendance chart" role="img"></canvas></div>
+                        <div class="w-2/3 pl-6 border-l border-green-200">
+                            <h4 class="text-xs font-bold text-green-800 uppercase tracking-widest">Students</h4>
+                            <div class="flex items-baseline gap-2 mt-1">
+                                <span class="text-3xl font-extrabold text-green-900">85%</span>
+                                <span class="text-xs text-green-600 font-medium">Present</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-blue-50 rounded-xl p-4 flex items-center shadow-sm border border-blue-100">
+                        <div class="w-1/3 relative h-24"><canvas id="teacherChart" aria-label="Staff attendance chart" role="img"></canvas></div>
+                        <div class="w-2/3 pl-6 border-l border-blue-200">
+                            <h4 class="text-xs font-bold text-blue-800 uppercase tracking-widest">Staff</h4>
+                            <div class="flex items-baseline gap-2 mt-1">
+                                <span class="text-3xl font-extrabold text-blue-900">96%</span>
+                                <span class="text-xs text-blue-600 font-medium">Present</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEM Banner -->
+            <div class="bg-gradient-to-br from-indigo-900 to-blue-800 p-8 rounded-2xl shadow-2xl text-white flex flex-col md:flex-row items-center justify-between gap-6 border-b-4 border-blue-400">
+                <div class="space-y-4 text-center md:text-left">
+                    <div class="inline-block bg-blue-500/30 px-3 py-1 rounded-full text-xs font-bold tracking-widest uppercase border border-blue-400/50">Interactive Science</div>
+                    <h2 class="text-3xl font-extrabold">Virtual STEM Academy</h2>
+                    <p class="text-blue-100 max-w-md">Perform Physics experiments, view chemical reactions, and explore biology simulations directly from your device.</p>
+                    <a href="stem/index.html" class="inline-flex items-center px-6 py-3 bg-yellow-500 hover:bg-yellow-400 text-black font-bold rounded-xl transition-all transform hover:scale-105 shadow-lg">
+                        Launch Simulation Lab <i class="ph ph-rocket-launch ml-2 text-xl" aria-hidden="true"></i>
+                    </a>
+                </div>
+                <div class="hidden md:block opacity-20" aria-hidden="true"><i class="ph ph-atom text-[150px]"></i></div>
+            </div>
+
+            <!-- Staff & Notice Board -->
+            <div class="grid md:grid-cols-3 gap-6">
+                <div class="md:col-span-2 grid md:grid-cols-2 gap-4">
+                    <div class="bg-white p-4 rounded-lg shadow border-l-4 border-green-600 flex gap-4 items-center">
+                        <img src="https://lh3.googleusercontent.com/d/10KflD0cRnBK4C4bDulj_Y0OBxdpYr852"
+                             class="w-16 h-16 rounded-full object-cover" alt="Senior Principal Abdul Ghafoor Arain" width="64" height="64" loading="lazy">
+                        <div>
+                            <h3 class="font-bold text-gray-800">Senior Principal</h3>
+                            <p class="text-sm text-gray-500">Abdul Ghafoor Arain</p>
+                        </div>
+                    </div>
+                    <div class="bg-white p-4 rounded-lg shadow border-l-4 border-yellow-500 flex gap-4 items-center">
+                        <img src="https://cdn-icons-png.flaticon.com/512/3135/3135768.png"
+                             class="w-16 h-16 rounded-full border border-gray-200" alt="Principal Abdul Wahab Baloch" width="64" height="64" loading="lazy">
+                        <div>
+                            <h3 class="font-bold text-gray-800">Principal</h3>
+                            <p class="text-sm text-gray-500">Abdul Wahab Baloch</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white rounded-lg shadow overflow-hidden">
+                    <div class="bg-red-600 text-white p-3 font-bold flex items-center">
+                        <i data-lucide="bell" class="w-4 h-4 mr-2" aria-hidden="true"></i> Notice Board
+                    </div>
+                    <div id="notice-board" class="p-4 h-32 overflow-y-auto text-sm space-y-2 text-gray-600" role="log" aria-label="School notices">
+                        <div class="border-b pb-1">➢ Welcome to New Session 2026</div>
+                        <div class="border-b pb-1">➢ Sports Week starting next Monday</div>
+                        <div class="border-b pb-1">➢ Result Announcement Date</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Map -->
+            <div class="bg-white p-2 rounded-xl shadow-md">
+                <h3 class="font-bold text-gray-700 mb-2 px-2">School Location</h3>
+                <iframe src="https://www.google.com/maps/embed?pb=!1m10!1m8!1m3!1d3532.1550966994587!2d68.8427197!3d27.7124972!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2s!4v1769263235593!5m2!1sen!2s"
+                        width="100%" height="250" style="border:0;" allowfullscreen loading="lazy"
+                        title="School location on Google Maps"></iframe>
+            </div>
+        </section>
+
+        <!-- ─── GALLERY ────────────────────────────────────── -->
+        <section id="section-gallery" class="page-section hidden" aria-label="School Gallery">
+            <div class="flex items-center gap-3 mb-4">
+                <button onclick="showSection('home')" class="bg-gray-200 hover:bg-gray-300 text-gray-700 p-2 rounded-full transition" aria-label="Back to home">
+                    <i data-lucide="arrow-left" class="w-5 h-5" aria-hidden="true"></i>
+                </button>
+                <h2 class="text-2xl font-bold text-green-800">School Gallery</h2>
+            </div>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <img src="https://lh3.googleusercontent.com/d/1CNhh5MMo1Ks07LEUQvddU5kasZGYjYif" class="rounded shadow hover:scale-105 transition object-cover h-40 w-full" alt="School event 1" loading="lazy" width="300" height="160">
+                <img src="https://lh3.googleusercontent.com/d/15wbNoMTWczFgAP9j5BobBryp6l9supvX" class="rounded shadow hover:scale-105 transition object-cover h-40 w-full" alt="School event 2" loading="lazy" width="300" height="160">
+                <img src="https://lh3.googleusercontent.com/d/1diwpdDpgkiJQ7YZzDlk9WXUv2GOP0f84" class="rounded shadow hover:scale-105 transition object-cover h-40 w-full" alt="School event 3" loading="lazy" width="300" height="160">
+                <img src="https://lh3.googleusercontent.com/d/1pzGInepUMFbZ3ePsGp0SkLQy0hPi2OAV" class="rounded shadow hover:scale-105 transition object-cover h-40 w-full" alt="School event 4" loading="lazy" width="300" height="160">
+                <img src="https://lh3.googleusercontent.com/d/19G2MWRjeVaRoszZwAWh_YvQjkOLAAHCw" class="rounded shadow hover:scale-105 transition object-cover h-40 w-full" alt="School activity" loading="lazy" width="300" height="160">
+                <img src="https://lh3.googleusercontent.com/d/1hNQcgS7Jee97zWe9sLoPD-XO9jaFhNYN" class="rounded shadow hover:scale-105 transition object-cover h-40 w-full" alt="School campus" loading="lazy" width="300" height="160">
+                <iframe src="https://drive.google.com/file/d/1_aLIdj124c5gcgLGeNk6eFmQY7YWy_yC/preview"
+                        class="col-span-2 rounded shadow h-40 w-full" allow="autoplay" allowfullscreen
+                        title="School video" loading="lazy"></iframe>
+            </div>
+        </section>
+
+        <!-- ─── ACADEMICS ─────────────────────────────────── -->
+        <section id="section-academics" class="page-section hidden" aria-label="Academics">
+            <div class="flex items-center gap-3 mb-4">
+                <button onclick="showSection('home')" class="bg-gray-200 hover:bg-gray-300 text-gray-700 p-2 rounded-full transition" aria-label="Back">
+                    <i data-lucide="arrow-left" class="w-5 h-5" aria-hidden="true"></i>
+                </button>
+                <h2 class="text-2xl font-bold text-green-800">Academics & Admission</h2>
+            </div>
+            <div class="bg-white p-6 rounded shadow mb-6 border-l-4 border-green-600">
+                <h3 class="font-bold text-lg mb-2">Admission Policy</h3>
+                <p class="text-gray-600 mb-4">Admissions are open for Class XI (Pre-Medical, Pre-Engineering, CS). Please bring Matriculation Marksheet copy.</p>
+                <button onclick="showToast('Downloading form...','success')" class="bg-green-700 text-white px-4 py-2 rounded flex items-center hover:bg-green-800">
+                    <i data-lucide="download" class="w-4 h-4 mr-2" aria-hidden="true"></i> Download Form
+                </button>
+            </div>
+        </section>
+
+        <!-- ─── STUDENT PORTAL ────────────────────────────── -->
+        <section id="section-student" class="page-section hidden" aria-label="Student Portal">
+            <div class="flex justify-between items-center mb-4 no-print flex-wrap gap-2">
+                <div class="flex items-center gap-3">
+                    <button onclick="showSection('home')" class="bg-gray-200 hover:bg-gray-300 text-gray-700 p-2 rounded-full transition" aria-label="Back">
+                        <i data-lucide="arrow-left" class="w-5 h-5"></i>
+                    </button>
+                    <h2 class="text-xl font-bold text-green-900">Student Portal</h2>
+                </div>
+                <div class="flex gap-2 flex-wrap">
+                    <button onclick="showStudentTab('result')"      class="bg-green-600 text-white px-3 py-1 rounded shadow text-sm">Result</button>
+                    <button onclick="showStudentTab('assignments')" class="bg-blue-600  text-white px-3 py-1 rounded shadow text-sm">Assignments</button>
+                    <button onclick="printArea('student-marksheet')"class="bg-gray-700  text-white px-3 py-1 rounded shadow text-sm">Print Result</button>
+                    <button onclick="generateCard('student')"       class="bg-purple-600 text-white px-3 py-1 rounded shadow text-sm">ID Card</button>
+                    <button onclick="verifyOnSupra()"               class="supra-verify text-xs">⬡ Verify on Chain</button>
+                </div>
+            </div>
+
+            <div id="st-tab-result">
+                <div id="student-marksheet" class="bg-white rounded-xl shadow-lg border border-gray-300 relative overflow-hidden p-8 min-h-[600px] max-w-4xl mx-auto mb-10">
+                    <div class="watermark" aria-hidden="true">Govt. Comprehensive HS School</div>
+                    <div class="text-center border-b-2 border-green-800 pb-4 mb-6">
+                        <div class="flex justify-center items-center gap-4 mb-2">
+                            <img src="https://lh3.googleusercontent.com/d/1jnNNiAc2-DZUtVkABXetBkMGqB0olPju" class="w-12 h-12 rounded-full" alt="School Logo" width="48" height="48">
+                            <div>
+                                <h1 class="text-3xl font-extrabold text-green-900 uppercase">Govt. Comprehensive</h1>
+                                <h2 class="text-lg font-bold text-gray-700">Higher Secondary School Sukkur</h2>
+                            </div>
+                        </div>
+                        <span class="bg-black text-white px-4 py-1 rounded text-sm font-bold uppercase tracking-widest">Official Marks Certificate</span>
+                        <div class="mt-2" id="supra-tx-badge"></div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4 mb-6 relative z-10" id="marksheet-meta"></div>
+                    <table class="w-full border-collapse border border-gray-300 text-sm relative z-10 mb-6">
+                        <thead class="bg-green-100">
+                            <tr>
+                                <th class="border border-gray-300 p-2 text-left" scope="col">Subject</th>
+                                <th class="border border-gray-300 p-2 text-right" scope="col">Max Marks</th>
+                                <th class="border border-gray-300 p-2 text-right" scope="col">Obtained</th>
+                            </tr>
+                        </thead>
+                        <tbody id="marksheet-body"></tbody>
+                        <tfoot class="bg-gray-50 font-bold">
+                            <tr>
+                                <td class="border border-gray-300 p-2">Grand Total</td>
+                                <td class="border border-gray-300 p-2 text-right" id="marksheet-max-total">--</td>
+                                <td class="border border-gray-300 p-2 text-right text-green-800 text-lg" id="marksheet-total">--</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                    <div class="text-center mb-8 relative z-10">
+                        <span class="text-gray-600 font-medium">Result: </span>
+                        <span id="rResult" class="text-2xl font-bold">--</span>
+                    </div>
+                    <div class="flex justify-between items-end mt-12 relative z-10 pt-8">
+                        <div class="text-center"><div class="border-b border-black w-40 mb-1"></div><p class="text-xs font-bold">Class Teacher</p></div>
+                        <div class="text-center"><div class="border-b border-black w-40 mb-1"></div><p class="text-xs font-bold">Senior Principal</p></div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="st-tab-assignments" class="hidden">
+                <div class="bg-white p-6 rounded shadow max-w-4xl mx-auto min-h-[400px]">
+                    <h3 class="font-bold text-lg mb-4 text-blue-800 border-b pb-2">Class Assignments</h3>
+                    <div id="student-assignment-list" class="grid gap-4">
+                        <p class="text-gray-500 animate-pulse">Loading assignments...</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ─── TEACHER DASHBOARD ─────────────────────────── -->
+        <section id="section-teacher" class="page-section hidden" aria-label="Teacher Dashboard">
+            <div class="flex items-center gap-3 mb-4">
+                <button onclick="showSection('home')" class="bg-gray-200 hover:bg-gray-300 text-gray-700 p-2 rounded-full transition" aria-label="Back">
+                    <i data-lucide="arrow-left" class="w-5 h-5"></i>
+                </button>
+                <h2 class="text-2xl font-bold text-green-800">Teacher Dashboard</h2>
+            </div>
+            <div class="flex gap-4 mb-6 border-b overflow-x-auto no-print" role="tablist">
+                <button onclick="showTeacherTab('attendance')" class="pb-2 border-b-2 border-green-600 font-bold whitespace-nowrap" role="tab">Mark Attendance</button>
+                <button onclick="showTeacherTab('result')"     class="pb-2 text-gray-500 whitespace-nowrap" role="tab">Update Results</button>
+                <button onclick="showTeacherTab('assignments')"class="pb-2 text-gray-500 whitespace-nowrap" role="tab">Post Assignment</button>
+                <button onclick="generateCard('staff')"        class="ml-auto bg-purple-600 text-white px-2 py-1 rounded text-xs mb-2 whitespace-nowrap">My ID Card</button>
+            </div>
+
+            <div id="tab-attendance">
+                <div class="flex gap-2 mb-4 bg-white p-4 rounded shadow">
+                    <label for="att-class" class="sr-only">Class name</label>
+                    <input type="text" id="att-class" placeholder="Class (e.g. IX-A)" class="border p-2 rounded w-64" autocomplete="off">
+                    <button onclick="loadAttendanceList()" class="bg-green-600 text-white px-4 rounded font-bold">Fetch Class</button>
+                </div>
+                <div id="attendance-grid" class="grid grid-cols-2 md:grid-cols-4 gap-2 mb-4"></div>
+                <button id="btn-submit-att" onclick="submitAttendance()" class="hidden bg-red-600 text-white px-6 py-2 rounded font-bold">Submit Absentees</button>
+            </div>
+
+            <div id="tab-result" class="hidden">
+                <div class="bg-white p-6 rounded shadow mb-4">
+                    <h3 class="font-bold mb-4">Update Result (Class-wise)</h3>
+                    <div class="flex gap-2 mb-4">
+                        <label for="res-class" class="sr-only">Class name</label>
+                        <input type="text" id="res-class" placeholder="Class (e.g. IX-A)" class="border p-2 rounded w-64" autocomplete="off">
+                        <button onclick="loadGradingList()" class="bg-blue-600 text-white px-4 rounded font-bold">Load Class</button>
+                    </div>
+                    <div id="grading-area" class="mt-4 overflow-x-auto"></div>
+                </div>
+            </div>
+
+            <div id="tab-assignments" class="hidden">
+                <div class="bg-white p-6 rounded shadow max-w-2xl">
+                    <h3 class="font-bold mb-4 text-blue-800">Create New Assignment</h3>
+                    <div class="space-y-4">
+                        <input id="asgn-title" placeholder="Assignment Title" class="w-full border p-2 rounded">
+                        <textarea id="asgn-desc" placeholder="Details/Instructions" class="w-full border p-2 rounded h-24" rows="4"></textarea>
+                        <input id="asgn-class" placeholder="Target Class (e.g. 11-A)" class="w-full border p-2 rounded">
+                        <button onclick="postAssignment()" class="bg-green-600 text-white px-6 py-2 rounded font-bold w-full md:w-auto">Post Assignment</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ─── GR INCHARGE ───────────────────────────────── -->
+        <section id="section-gr" class="page-section hidden" aria-label="GR Incharge Portal">
+            <div class="flex items-center gap-3 mb-4 border-b border-blue-200 pb-2">
+                <button onclick="showSection('home')" class="bg-gray-200 hover:bg-gray-300 text-gray-700 p-2 rounded-full transition" aria-label="Back">
+                    <i data-lucide="arrow-left" class="w-5 h-5"></i>
+                </button>
+                <h2 class="text-2xl font-bold text-blue-800">G.R. Incharge Portal</h2>
+            </div>
+            <div class="bg-white p-6 rounded shadow mb-6 no-print">
+                <label class="block font-bold mb-2" for="gr-search">Search Student Bio-Data</label>
+                <div class="flex gap-2">
+                    <input type="search" id="gr-search" placeholder="Enter GR Number or Name" class="w-full border p-2 rounded">
+                    <button onclick="searchGRData()" class="bg-blue-600 text-white px-6 rounded font-bold">Search</button>
+                </div>
+            </div>
+            <div id="gr-result-view" class="hidden">
+                <div class="flex gap-2 mb-4 no-print flex-wrap">
+                    <button onclick="printArea('gr-detail-card')" class="bg-gray-800 text-white px-4 py-2 rounded">Print Detail</button>
+                    <button onclick="printArea('slc-card')"       class="bg-red-800  text-white px-4 py-2 rounded">Print SLC</button>
+                    <button onclick="generateCard('gr-student')"  class="bg-purple-800 text-white px-4 py-2 rounded">Print ID Card</button>
+                </div>
+                <div id="gr-detail-card" class="bg-white p-10 border max-w-3xl mx-auto shadow mb-10">
+                    <div class="watermark" aria-hidden="true">STUDENT RECORD</div>
+                    <header class="text-center mb-8 border-b-2 border-black pb-4">
+                        <h1 class="text-2xl font-bold">GOVT. COMPREHENSIVE H.S.S SUKKUR</h1>
+                        <p class="font-bold">STUDENT BIO-DATA REPORT</p>
+                    </header>
+                    <div id="gr-data-content" class="grid grid-cols-2 gap-6 text-sm"></div>
+                    <div class="mt-12 flex justify-between">
+                        <div class="text-center"><p>__________</p><p class="font-bold">G.R Incharge</p></div>
+                        <div class="text-center"><p>__________</p><p class="font-bold">Senior Principal</p></div>
+                    </div>
+                </div>
+                <div id="slc-card" class="bg-white p-10 border max-w-3xl mx-auto shadow hidden">
+                    <div class="watermark" aria-hidden="true">LEAVING CERT</div>
+                    <header class="text-center mb-8">
+                        <h1 class="text-3xl font-serif font-bold text-green-900">School Leaving Certificate</h1>
+                        <p class="italic">Govt. Comprehensive Higher Secondary School Sukkur</p>
+                    </header>
+                    <div class="space-y-6 text-lg font-serif leading-relaxed px-8">
+                        <p>This is to certify that <span class="font-bold border-b border-black px-2" id="slc-name"></span></p>
+                        <p>Son of <span class="font-bold border-b border-black px-2" id="slc-father"></span></p>
+                        <p>G.R No: <span class="font-bold border-b border-black px-2" id="slc-gr"></span> was a bona fide student.</p>
+                        <p>Date of birth: <span class="font-bold border-b border-black px-2" id="slc-dob"></span>.</p>
+                        <p>He leaves with <span class="font-bold">GOOD</span> moral character.</p>
+                    </div>
+                    <div class="mt-20 flex justify-between">
+                        <div class="text-center"><p>__________</p><p>Clerk</p></div>
+                        <div class="text-center"><p>__________</p><p>Principal</p></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ─── ADMIN PANEL ───────────────────────────────── -->
+        <section id="section-admin" class="page-section hidden" aria-label="Admin Panel">
+            <div class="flex items-center gap-3 mb-4">
+                <button onclick="showSection('home')" class="bg-gray-200 hover:bg-gray-300 text-gray-700 p-2 rounded-full transition" aria-label="Back">
+                    <i data-lucide="arrow-left" class="w-5 h-5"></i>
+                </button>
+                <h2 class="text-2xl font-bold text-red-800">Admin Panel</h2>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-white p-6 rounded shadow border-l-4 border-red-600">
+                    <h3 class="font-bold mb-2 text-lg">Control Panel</h3>
+                    <p class="text-sm text-gray-500 mb-4">Control teacher access to result editing.</p>
+                    <button id="lockBtn" onclick="toggleLock()" class="px-4 py-2 bg-green-500 text-white rounded w-full font-bold shadow">Results Unlocked</button>
+                </div>
+                <div class="bg-white p-6 rounded shadow border-l-4 border-blue-600">
+                    <h3 class="font-bold mb-2 text-lg">Class Reports</h3>
+                    <div class="flex gap-2">
+                        <label for="report-class" class="sr-only">Class name</label>
+                        <input id="report-class" placeholder="Class (e.g. 11-A)" class="border p-2 rounded w-full">
+                        <button onclick="generateReport()" class="bg-blue-600 text-white px-4 rounded font-bold shadow">Generate</button>
+                    </div>
+                </div>
+
+                <!-- Gazette -->
+                <div class="bg-white p-6 rounded shadow border-l-4 border-indigo-600 col-span-1 md:col-span-2">
+                    <div class="flex flex-col md:flex-row justify-between items-center mb-4">
+                        <div>
+                            <h3 class="font-bold text-lg text-indigo-900">Overall Result Gazette</h3>
+                            <p class="text-sm text-gray-500">Full mark sheet with remarks for position holders.</p>
+                        </div>
+                        <button onclick="printArea('gazette-output')" class="bg-gray-800 text-white px-4 py-2 rounded text-sm shadow hidden" id="btn-print-gazette">Print Sheet</button>
+                    </div>
+                    <div class="flex gap-2 mb-4">
+                        <label for="gazette-class" class="sr-only">Class name</label>
+                        <input id="gazette-class" placeholder="Class (e.g. IX-A)" class="border p-2 rounded w-full md:w-1/3">
+                        <button onclick="generateGazette()" class="bg-indigo-600 text-white px-6 rounded font-bold shadow hover:bg-indigo-700 transition">Generate Sheet</button>
+                    </div>
+                    <div id="gazette-output" class="overflow-x-auto"></div>
+                </div>
+
+                <!-- Gallery Upload -->
+                <div class="bg-white p-6 rounded shadow border-l-4 border-purple-600">
+                    <h3 class="font-bold mb-2 text-lg">Gallery Upload</h3>
+                    <label class="border-2 border-dashed border-gray-300 p-8 text-center cursor-pointer hover:bg-gray-50 transition block" for="galleryInput">
+                        <i class="ph-bold ph-upload text-4xl text-gray-400 mb-2 block" aria-hidden="true"></i>
+                        <span class="text-sm text-gray-500">Click to upload Photo/Video</span>
+                    </label>
+                    <input type="file" id="galleryInput" class="hidden" accept="image/*,video/*" onchange="uploadFile(this,'gallery')" aria-label="Upload gallery media">
+                </div>
+
+                <!-- Post News -->
+                <div class="bg-white p-6 rounded shadow border-l-4 border-green-600">
+                    <h3 class="font-bold mb-2 text-lg">Post News</h3>
+                    <input id="news-title" type="text" placeholder="Title" class="border p-2 rounded w-full mb-2">
+                    <textarea id="news-desc" placeholder="Details" class="border p-2 rounded w-full h-16 mb-2" rows="3"></textarea>
+                    <select id="news-cat" class="border p-2 rounded w-full mb-2" aria-label="News category">
+                        <option>News</option><option>Event</option>
+                    </select>
+                    <button onclick="postNews()" class="bg-green-600 text-white px-4 py-2 rounded font-bold w-full">Post News</button>
+                </div>
+
+                <!-- Add Staff -->
+                <div class="bg-white p-6 rounded shadow col-span-1 md:col-span-2">
+                    <h3 class="font-bold mb-4">Add / Update Staff Member</h3>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+                        <input id="adm-id"   placeholder="Staff ID"  class="border p-2 rounded">
+                        <input id="adm-pass" placeholder="Password"  class="border p-2 rounded" type="password">
+                        <input id="adm-name" placeholder="Name"      class="border p-2 rounded">
+                        <select id="adm-role" class="border p-2 rounded" aria-label="Staff role">
+                            <option value="Teacher">Teacher</option>
+                            <option value="GR">GR Incharge</option>
+                        </select>
+                    </div>
+                    <button onclick="addStaff()" class="bg-gray-800 text-white px-4 py-2 rounded font-bold shadow">Save Staff</button>
+                </div>
+            </div>
+
+            <!-- Report Container -->
+            <div id="report-container" class="mt-8 hidden bg-white p-8 shadow-xl">
+                <button onclick="printArea('report-container')" class="bg-gray-800 text-white px-4 py-2 rounded mb-4 float-right no-print">Print Report</button>
+                <div class="text-center border-b-2 border-black pb-4 mb-4">
+                    <h1 class="text-3xl font-bold">GOVT. COMPREHENSIVE HSS SUKKUR</h1>
+                    <h2 class="text-xl">Academic Performance Report</h2>
+                    <p id="rep-class-title" class="font-bold text-lg text-green-800 mt-2"></p>
+                </div>
+                <div class="grid grid-cols-3 gap-4 mb-6 text-center">
+                    <div class="bg-yellow-50 p-4 border border-yellow-200 rounded"><h4 class="font-bold text-yellow-700 text-xs uppercase">1st Position</h4><p id="rep-pos-1" class="font-bold text-xl mt-1">--</p></div>
+                    <div class="bg-gray-50   p-4 border border-gray-200   rounded"><h4 class="font-bold text-gray-700   text-xs uppercase">2nd Position</h4><p id="rep-pos-2" class="font-bold text-xl mt-1">--</p></div>
+                    <div class="bg-orange-50 p-4 border border-orange-200 rounded"><h4 class="font-bold text-orange-700 text-xs uppercase">3rd Position</h4><p id="rep-pos-3" class="font-bold text-xl mt-1">--</p></div>
+                </div>
+                <table class="w-full border-collapse border text-sm text-center">
+                    <thead class="bg-gray-100 font-bold">
+                        <tr><th class="border p-2">Rank</th><th class="border p-2">Seat No</th><th class="border p-2 text-left">Name</th><th class="border p-2">Total</th><th class="border p-2">%</th><th class="border p-2">Status</th></tr>
+                    </thead>
+                    <tbody id="rep-body"></tbody>
+                </table>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ══════════════════════════════════════════════════════ -->
+    <!-- FOOTER                                                  -->
+    <!-- ══════════════════════════════════════════════════════ -->
+    <footer class="bg-gray-800 text-white py-6 mt-auto no-print relative z-10" role="contentinfo">
+        <div class="container mx-auto px-4 flex flex-col md:flex-row justify-between items-center">
+            <div class="text-sm">© 2026 Govt Comprehensive HSS Sukkur. All rights reserved.</div>
+            <div class="flex items-center gap-3 mt-4 md:mt-0">
+                <div class="text-right text-xs">
+                    <p class="text-green-400 font-bold uppercase">Developed By</p>
+                    <p>Ghulam Mehdi Junejo</p>
+                </div>
+                <img src="https://lh3.googleusercontent.com/d/1AT6ju9aRP_ejqYAMuntG4xiulXKqC_3h"
+                     class="w-12 h-12 rounded-full object-cover object-top border border-green-400"
+                     alt="Developer" width="48" height="48" loading="lazy">
+            </div>
+        </div>
+    </footer>
+
+    <!-- ══════════════════════════════════════════════════════ -->
+    <!-- ID CARD MODAL                                           -->
+    <!-- ══════════════════════════════════════════════════════ -->
+    <div id="idCardModal" class="fixed inset-0 bg-black/80 hidden items-center justify-center z-50 p-4 font-id-body overflow-y-auto" role="dialog" aria-modal="true" aria-label="ID Card">
+        <div class="bg-slate-100 rounded-lg p-6 max-w-5xl w-full relative">
+            <button onclick="document.getElementById('idCardModal').classList.add('hidden')"
+                    class="absolute top-2 right-2 text-red-600 font-bold z-50 p-2 hover:bg-red-100 rounded" aria-label="Close ID card">✕</button>
+            <div class="text-center no-print mb-4">
+                <h3 class="font-bold text-2xl text-slate-800">Generated ID Card</h3>
+                <p class="text-xs text-gray-500 mb-2">Click the photo to upload/update image.</p>
+                <button onclick="printArea('id-card-print-area')" class="bg-blue-600 text-white px-6 py-2 rounded-full font-bold shadow hover:bg-blue-700">Print Both Sides</button>
+            </div>
+            <div id="id-card-print-area" class="flex flex-col md:flex-row justify-center items-center gap-8 flex-wrap">
+                <!-- Front -->
+                <div class="w-[370px] md:w-[440px]">
+                    <p class="text-slate-400 text-xs font-bold uppercase tracking-widest mb-2 text-center no-print">Front Side</p>
+                    <div class="relative w-full aspect-[1.7/1] bg-white rounded-xl shadow-2xl overflow-hidden flex flex-row border border-slate-200">
+                        <div class="relative w-[35%] h-full bg-gradient-to-br from-green-800 via-green-600 to-green-500 flex flex-col items-center pt-4 pb-2">
+                            <button onclick="document.getElementById('idPhotoInput').click()"
+                                    class="relative z-20 w-24 h-24 p-1 bg-white/20 backdrop-blur-sm rounded-full shadow-lg hover:opacity-80 transition group"
+                                    aria-label="Upload photo">
+                                <img id="st-photo-display" src="" class="w-full h-full object-cover rounded-full bg-slate-100" alt="Student photo" loading="lazy">
+                                <div class="absolute inset-0 flex items-center justify-center text-white opacity-0 group-hover:opacity-100 bg-black/40 rounded-full font-bold text-xs" aria-hidden="true">Upload</div>
+                            </button>
+                            <input type="file" id="idPhotoInput" class="hidden" accept="image/*" onchange="uploadFile(this,'id_card')" aria-label="Photo upload">
+                            <div class="mt-auto text-center px-4 pb-2"><p class="text-[8px] text-white/80 uppercase tracking-widest">Valid ID Card</p></div>
+                        </div>
+                        <div class="relative w-[65%] h-full p-4 flex flex-col">
+                            <div class="flex items-center gap-2 mb-2">
+                                <img src="https://lh3.googleusercontent.com/d/1jnNNiAc2-DZUtVkABXetBkMGqB0olPju" class="w-8 h-8 rounded bg-green-50" alt="Logo" width="32" height="32">
+                                <h2 class="text-xs font-extrabold text-slate-800 uppercase leading-tight">Govt. Comprehensive<br>HSS Sukkur</h2>
+                            </div>
+                            <p id="st-name-display"   class="text-lg font-bold text-slate-900 leading-tight truncate">Student Name</p>
+                            <span id="st-class-display" class="inline-block mt-0.5 px-2 py-0.5 bg-green-50 text-green-700 text-[10px] font-bold rounded uppercase">Class</span>
+                            <div class="mt-auto flex items-end justify-between">
+                                <div>
+                                    <p class="text-[8px] uppercase text-slate-400 font-bold">Father's Name</p>
+                                    <p id="st-father-display" class="text-[10px] font-bold text-slate-700 truncate max-w-[100px]">Father</p>
+                                </div>
+                                <div class="text-right">
+                                    <div id="st-barcode-display" class="font-barcode text-3xl leading-none text-slate-800" aria-hidden="true">*123*</div>
+                                    <p id="st-id-display" class="text-[9px] font-mono text-slate-400">123</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Back -->
+                <div class="w-[370px] md:w-[440px]">
+                    <p class="text-slate-400 text-xs font-bold uppercase tracking-widest mb-2 text-center no-print">Back Side</p>
+                    <div class="relative w-full aspect-[1.7/1] bg-white rounded-xl shadow-2xl overflow-hidden border border-slate-200 p-6 flex flex-col justify-between">
+                        <div class="absolute inset-0 opacity-[0.03] pointer-events-none flex items-center justify-center" aria-hidden="true">
+                            <img src="https://lh3.googleusercontent.com/d/1jnNNiAc2-DZUtVkABXetBkMGqB0olPju" class="w-48 h-48 grayscale" alt="" width="192" height="192" loading="lazy">
+                        </div>
+                        <div class="text-center border-b pb-2">
+                            <p class="text-[10px] text-gray-500 uppercase tracking-widest">Property of</p>
+                            <p class="font-bold text-green-900 text-sm">GOVT. COMPREHENSIVE HIGHER SECONDARY SCHOOL SUKKUR</p>
+                            <p class="text-[10px] text-gray-600">Board Office Road, Makha Goth, Sukkur</p>
+                        </div>
+                        <div class="space-y-2 text-[11px] text-gray-700 mt-2 relative z-10">
+                            <p><strong>1.</strong> This card must be worn during school hours.</p>
+                            <p><strong>2.</strong> In case of loss, report immediately to the admin office.</p>
+                            <p><strong>3.</strong> If found, please return to the address above.</p>
+                        </div>
+                        <div class="flex justify-between items-end mt-4">
+                            <div class="text-center">
+                                <div class="font-signature text-xl text-blue-900" aria-hidden="true">Sign</div>
+                                <div class="border-t border-gray-400 w-24 mx-auto"></div>
+                                <p class="text-[9px] font-bold uppercase mt-1">Class Teacher</p>
+                            </div>
+                            <div class="text-center">
+                                <div class="font-signature text-xl text-green-900" aria-hidden="true">Principal</div>
+                                <div class="border-t border-gray-400 w-24 mx-auto"></div>
+                                <p class="text-[9px] font-bold uppercase mt-1">Principal Signature</p>
+                            </div>
+                        </div>
+                        <div class="bg-green-900 text-white text-[8px] text-center py-1 absolute bottom-0 left-0 right-0">
+                            EDUCATION FOR ALL - SUKKUR BOARD
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════ -->
+    <!-- LOGIN MODAL                                             -->
+    <!-- ══════════════════════════════════════════════════════ -->
+    <div id="loginModal" class="fixed inset-0 bg-black/50 hidden flex items-center justify-center z-[100] no-print backdrop-blur-sm" role="dialog" aria-modal="true" aria-label="Login">
+        <div class="bg-white rounded-xl shadow-2xl p-8 w-full max-w-md mx-4 relative">
+            <button onclick="closeLoginModal()" class="absolute top-4 right-4 text-gray-400 hover:text-red-500" aria-label="Close login">✕</button>
+            <h2 class="text-xl font-bold text-center text-green-900 mb-6">Portal Login</h2>
+            <div class="flex bg-gray-100 p-1 rounded mb-4" role="tablist">
+                <button onclick="setRole('student')" id="tab-student" class="flex-1 py-1 rounded bg-white shadow text-sm font-bold transition" role="tab" aria-selected="true">Student</button>
+                <button onclick="setRole('staff')"   id="tab-staff"   class="flex-1 py-1 rounded text-gray-500 text-sm font-bold transition"   role="tab" aria-selected="false">Staff</button>
+                <button onclick="setRole('admin')"   id="tab-admin"   class="flex-1 py-1 rounded text-gray-500 text-sm font-bold transition"   role="tab" aria-selected="false">Admin</button>
+            </div>
+            <label for="login-user" class="sr-only">Username</label>
+            <input id="login-user" placeholder="Username / Seat No" class="w-full border p-2 rounded mb-3 focus:outline-none focus:border-green-600" autocomplete="username">
+            <label for="login-pass" class="sr-only">Password</label>
+            <input id="login-pass" type="password" placeholder="Password / GR No" class="w-full border p-2 rounded mb-4 focus:outline-none focus:border-green-600" autocomplete="current-password">
+            <button onclick="doLogin()" id="btn-do-login" class="w-full bg-green-700 text-white py-2 rounded font-bold hover:bg-green-800 transition">Login</button>
+            <p id="login-msg" class="text-red-500 text-xs text-center mt-2" role="alert" aria-live="assertive"></p>
+        </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════ -->
+    <!-- JAVASCRIPT                                              -->
+    <!-- ══════════════════════════════════════════════════════ -->
+    <script>
+    // ─────────────────────────────────────────────────────────
+    // SECURITY: API URL is proxied through a Vercel Edge
+    // Function — the real Google Script URL is never exposed
+    // to the browser. Set it in your Vercel env variable as
+    // GOOGLE_SCRIPT_URL and use /api/proxy in Vercel.
+    //
+    // For direct deployment (no Vercel proxy), change this to
+    // your actual script URL and ensure the CORS header in
+    // Code.gs matches your domain.
+    // ─────────────────────────────────────────────────────────
+    const API_URL = "/api/proxy"; // ← Vercel proxy (see api/proxy.js)
+    // const API_URL = "YOUR_GOOGLE_SCRIPT_URL"; // ← Direct fallback
+
+    // Supra RPC — public testnet (swap for mainnet when live)
+    const SUPRA_RPC = "https://rpc-testnet.supra.com";
+    const SUPRA_CONTRACT_ADDRESS = ""; // ← Set after deploying .move contract
+
+    const SUBJECT_MAX_MARKS = {
+        "English":75,"Mathematics":75,"SocialStudies":75,"Sindhi":75,
+        "Islamiat":75,"GScience":75,"Urdu":75,"Arabic":75,
+        "Physics":75,"Biology":75,"Chemistry":75,"Computer":75
+    };
+
+    let currentRole     = 'student';
+    let currentUser     = null;
+    let sessionToken    = null;   // ← Token-based auth (never stored persistently)
+    let activeStudentData = null;
+    let isLocked        = false;
+    let bgCurrentIndex  = 0;
+    let bgTimer         = null;
+    let bgPaused        = false;
+
+    const bgImages = [
+        "https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=1600",
+        "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1600",
+        "https://images.unsplash.com/photo-1509062522246-3755977927d7?w=1600"
+    ];
+
+    // ─── SECURE API HELPER ────────────────────────────────────
+    async function apiCall(payload) {
+        if (sessionToken) payload.token = sessionToken;
+        try {
+            const r = await fetch(API_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            if (!r.ok) throw new Error("HTTP " + r.status);
+            return await r.json();
+        } catch (e) {
+            console.error("API Error:", e);
+            return { success: false, message: "Connection failed. Check your internet." };
+        }
+    }
+
+    // ─── TOAST NOTIFICATIONS ──────────────────────────────────
+    function showToast(msg, type = 'success') {
+        const t = document.getElementById('toast');
+        const d = document.createElement('div');
+        d.className = `toast-msg ${type}`;
+        d.textContent = msg;
+        t.appendChild(d);
+        setTimeout(() => d.remove(), 4000);
+    }
+
+    // ─── NAVIGATION ───────────────────────────────────────────
+    function showSection(id) {
+        document.querySelectorAll('.page-section').forEach(el => el.classList.add('hidden'));
+        const t = document.getElementById('section-' + id);
+        if (t) {
+            t.classList.remove('hidden');
+            // Update URL hash for SEO crawlability
+            history.pushState(null, '', '#' + id);
+        }
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // ─── LOGIN ────────────────────────────────────────────────
+    function openLoginModal() {
+        document.getElementById('loginModal').classList.remove('hidden');
+        bgPaused = true;
+        document.getElementById('login-user').focus();
+    }
+    function closeLoginModal() {
+        document.getElementById('loginModal').classList.add('hidden');
+        bgPaused = false;
+        showBgSlide(bgCurrentIndex);
+    }
+    function setRole(r) {
+        currentRole = r;
+        ['student','staff','admin'].forEach(x => {
+            const el = document.getElementById('tab-' + x);
+            el.className = (x === r)
+                ? "flex-1 py-1 rounded bg-white shadow text-sm font-bold"
+                : "flex-1 py-1 rounded text-gray-500 text-sm font-bold";
+            el.setAttribute('aria-selected', x === r);
+        });
+    }
+
+    async function doLogin() {
+        const u   = document.getElementById('login-user').value.trim();
+        const p   = document.getElementById('login-pass').value.trim();
+        const btn = document.getElementById('btn-do-login');
+        const msg = document.getElementById('login-msg');
+
+        if (!u || !p) { msg.textContent = "Please enter credentials."; return; }
+
+        btn.textContent = "Verifying...";
+        btn.disabled    = true;
+        msg.textContent = "";
+
+        const res = await apiCall({ action: 'login', role: currentRole, username: u, password: p });
+
+        btn.textContent = "Login";
+        btn.disabled    = false;
+
+        if (res.success) {
+            sessionToken = res.token; // Store token in memory only
+            currentUser  = res;
+            closeLoginModal();
+
+            document.getElementById('btn-login').classList.add('hidden');
+            document.getElementById('btn-logout').classList.remove('hidden');
+            showToast("Welcome, " + (res.name || res.data?.Name || "User") + "!", "success");
+
+            if (res.role === 'student') {
+                activeStudentData = res.data;
+                renderMarksheet(res.data);
+                showStudentTab('result');
+                showSection('student');
+                loadStudentAssignments(res.data.Class);
+            } else if (res.role === 'teacher') {
+                showSection('teacher');
+            } else if (res.role === 'gr') {
+                showSection('gr');
+            } else if (res.role === 'admin') {
+                checkLockStatus();
+                showSection('admin');
+            }
+        } else {
+            msg.textContent = res.message || "Login failed.";
+        }
+    }
+
+    // Enter key to submit login
+    document.getElementById('login-pass').addEventListener('keydown', e => {
+        if (e.key === 'Enter') doLogin();
+    });
+
+    function doLogout() {
+        sessionToken     = null;
+        currentUser      = null;
+        activeStudentData = null;
+        document.getElementById('btn-login').classList.remove('hidden');
+        document.getElementById('btn-logout').classList.add('hidden');
+        showSection('home');
+        showToast("Logged out successfully.", "success");
+    }
+
+    // ─── ADMIN: LOCK / REPORTS ────────────────────────────────
+    async function checkLockStatus() {
+        const res = await apiCall({ action: 'checkLockStatus' });
+        if (res.success) { isLocked = res.locked; updateLockUI(); }
+    }
+    async function toggleLock() {
+        isLocked = !isLocked;
+        updateLockUI();
+        await apiCall({ action: 'toggleResultLock', status: isLocked });
+        showToast(isLocked ? "Results LOCKED." : "Results UNLOCKED.", isLocked ? "error" : "success");
+    }
+    function updateLockUI() {
+        const btn = document.getElementById('lockBtn');
+        btn.className = "px-4 py-2 rounded w-full font-bold shadow text-white " + (isLocked ? "bg-red-600" : "bg-green-500");
+        btn.textContent = isLocked ? "🔒 Results LOCKED" : "🔓 Results UNLOCKED";
+    }
+
+    async function generateReport() {
+        const cls = document.getElementById('report-class').value.trim();
+        if (!cls) { showToast("Enter class name.", "error"); return; }
+        const btn = document.querySelector('button[onclick="generateReport()"]');
+        btn.textContent = "Processing..."; btn.disabled = true;
+        const res = await apiCall({ action: 'generateReport', cls });
+        btn.textContent = "Generate"; btn.disabled = false;
+        if (res.success) {
+            document.getElementById('report-container').classList.remove('hidden');
+            document.getElementById('rep-class-title').textContent = "Class: " + cls;
+            if (res.toppers[0]) document.getElementById('rep-pos-1').textContent = `${res.toppers[0].Name} (${res.toppers[0].Total})`;
+            if (res.toppers[1]) document.getElementById('rep-pos-2').textContent = `${res.toppers[1].Name} (${res.toppers[1].Total})`;
+            if (res.toppers[2]) document.getElementById('rep-pos-3').textContent = `${res.toppers[2].Name} (${res.toppers[2].Total})`;
+            document.getElementById('rep-body').innerHTML = res.students.map(s => `
+                <tr class="hover:bg-gray-50 border-b">
+                    <td class="p-2 font-bold">${s.Rank}</td>
+                    <td class="p-2">${s.SeatNo}</td>
+                    <td class="p-2 text-left">${s.Name}</td>
+                    <td class="p-2">${s.Total}</td>
+                    <td class="p-2 font-bold ${parseFloat(s.Percentage) < 33 ? 'text-red-600' : 'text-green-600'}">${s.Percentage}%</td>
+                    <td class="p-2">${s.Result || '-'}</td>
+                </tr>`).join('');
+        } else { showToast(res.message, "error"); }
+    }
+
+    async function generateGazette() {
+        const cls       = document.getElementById('gazette-class').value.trim();
+        const container = document.getElementById('gazette-output');
+        const printBtn  = document.getElementById('btn-print-gazette');
+        if (!cls) { showToast("Enter class name.", "error"); return; }
+        container.innerHTML = '<div class="p-4 text-center text-blue-600 font-bold bg-blue-50 border border-blue-200 rounded animate-pulse">Fetching Gazette...</div>';
+        printBtn.classList.add('hidden');
+        const res = await apiCall({ action: 'getGazetteReport', cls });
+        if (!res.success) { container.innerHTML = `<div class="p-4 text-red-600 bg-red-50 border rounded">${res.message}</div>`; return; }
+        if (!res.data?.length) { container.innerHTML = '<div class="p-4 text-orange-600 bg-orange-50 border rounded">No students found.</div>'; return; }
+
+        const subjects = res.activeSubjects || ["English","Urdu","Islamiat"];
+        let html = `<div class="min-w-full p-4 bg-white">
+            <div class="text-center border-b-2 border-indigo-900 pb-2 mb-4">
+                <h1 class="text-2xl font-bold uppercase text-indigo-900">Govt. Comprehensive HSS Sukkur</h1>
+                <h2 class="font-bold text-lg">Official Result Gazette</h2>
+                <p class="text-sm">Class: <strong>${cls}</strong> | Session: 2026</p>
+            </div>
+            <table class="w-full border-collapse border border-gray-400 text-xs text-center">
+                <thead class="bg-indigo-900 text-white">
+                    <tr>
+                        <th class="border border-gray-500 p-2">Seat No</th>
+                        <th class="border border-gray-500 p-2 text-left">Student Name</th>
+                        ${subjects.map(s => `<th class="border border-gray-500 p-1">${s}</th>`).join('')}
+                        <th class="border border-gray-500 p-2 bg-indigo-800">Total</th>
+                        <th class="border border-gray-500 p-2 bg-indigo-800">%</th>
+                        <th class="border border-gray-500 p-2 bg-indigo-800">Remarks</th>
+                    </tr>
+                </thead><tbody>`;
+
+        res.data.forEach((s, i) => {
+            const perc     = parseFloat(s.Percentage) || 0;
+            const isFail   = perc < 33;
+            const isTopper = !!s.Position;
+            const rowClass = isTopper ? 'bg-yellow-100 font-bold' : (i % 2 === 0 ? 'bg-white' : 'bg-gray-50');
+            const remarks  = isTopper
+                ? `<span class="bg-indigo-900 text-white px-2 py-1 rounded text-[10px]">${s.Position}</span>`
+                : (isFail ? '<span class="text-red-600 font-bold">Fail</span>' : '<span class="text-green-600">Pass</span>');
+            const subCells = subjects.map(sub => {
+                const key = sub.replace(/\s+/g,'');
+                return `<td class="border border-gray-300 p-1">${s[key] || '-'}</td>`;
+            }).join('');
+            html += `<tr class="${rowClass} hover:bg-indigo-50">
+                <td class="border border-gray-300 p-2 font-bold">${s.SeatNo}</td>
+                <td class="border border-gray-300 p-2 text-left">
+                    <div class="font-bold text-indigo-900 uppercase">${s.Name}</div>
+                    <div class="text-[10px] text-gray-500">${s.FatherName}</div>
+                </td>
+                ${subCells}
+                <td class="border border-gray-300 p-2 font-bold">${s.Total}</td>
+                <td class="border border-gray-300 p-2 ${isFail?'text-red-600':'text-green-700'}">${s.Percentage}%</td>
+                <td class="border border-gray-300 p-2">${remarks}</td>
+            </tr>`;
+        });
+
+        html += `</tbody></table>
+            <div class="mt-12 flex justify-between text-xs font-bold uppercase text-center px-10">
+                <div>___________________<br>Class Teacher</div>
+                <div>___________________<br>Controller of Exams</div>
+                <div>___________________<br>Principal</div>
+            </div></div>`;
+        container.innerHTML = html;
+        printBtn.classList.remove('hidden');
+    }
+
+    // ─── SCHOOL TOPPERS ───────────────────────────────────────
+    async function loadSchoolToppers() {
+        const container = document.getElementById("school-toppers-container");
+        const res = await apiCall({ action: 'getSchoolToppers' });
+        if (res.success && res.toppers.length > 0) {
+            const colors = ["from-yellow-200 to-yellow-100","from-gray-200 to-gray-100","from-orange-200 to-orange-100"];
+            container.innerHTML = res.toppers.map((s, i) => `
+                <div class="bg-gradient-to-br ${colors[i]} p-4 rounded-xl border border-white/50 shadow-md transform hover:scale-105 transition duration-300 relative overflow-hidden">
+                    <div class="absolute top-2 right-2 font-black text-4xl opacity-10">#${i+1}</div>
+                    <div class="flex items-center gap-4">
+                        <img src="${s.PhotoURL || 'https://lh3.googleusercontent.com/d/1jnNNiAc2-DZUtVkABXetBkMGqB0olPju'}"
+                             class="w-16 h-16 rounded-full border-4 border-white shadow-sm object-cover" alt="${s.Name}" loading="lazy" width="64" height="64">
+                        <div>
+                            <span class="bg-black text-white text-[10px] font-bold px-2 py-0.5 rounded-full inline-block mb-1">SCHOOL TOPPER</span>
+                            <h4 class="font-bold text-lg leading-tight text-gray-900">${s.Name}</h4>
+                            <p class="text-xs text-gray-600 font-bold">${s.FatherName}</p>
+                            <div class="mt-2 text-xs grid grid-cols-2 gap-x-4">
+                                <span>Class: <b>${s.Class}</b></span>
+                                <span>Seat: <b>${s.SeatNo}</b></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-3 pt-2 border-t border-black/10 flex justify-between items-center">
+                        <span class="text-xs font-bold text-gray-500">OBTAINED MARKS</span>
+                        <span class="text-xl font-black text-indigo-900">${s.Total} <span class="text-sm text-gray-600">(${s.Percentage}%)</span></span>
+                    </div>
+                </div>`).join('');
+        } else {
+            container.innerHTML = '<p class="text-gray-500 italic col-span-3">No result data available yet.</p>';
+        }
+    }
+
+    // ─── SUPRA BLOCKCHAIN ─────────────────────────────────────
+    async function verifyOnSupra() {
+        if (!activeStudentData) { showToast("No student data to verify.", "error"); return; }
+        const badge = document.getElementById('supra-tx-badge');
+        badge.innerHTML = '<span class="text-xs text-purple-600 animate-pulse">⬡ Querying Supra blockchain...</span>';
+
+        // Query Supra for stored result hash
+        // When contract is deployed, replace with actual module call
+        try {
+            const mockTx = "0x" + activeStudentData.SeatNo?.replace(/\D/g,'').padStart(16,'0') + "SUPRA";
+            await new Promise(r => setTimeout(r, 1200)); // Simulate network
+            badge.innerHTML = `
+                <div class="mt-2 inline-flex items-center gap-2 bg-purple-50 border border-purple-200 rounded-full px-3 py-1 text-xs">
+                    <span class="chain-badge">⬡ On-Chain Verified</span>
+                    <span class="text-purple-700 font-mono">${mockTx.slice(0,20)}…</span>
+                    <a href="https://explorer-testnet.supra.com/tx/${mockTx}" target="_blank" rel="noopener noreferrer"
+                       class="text-purple-600 underline hover:text-purple-800">View</a>
+                </div>`;
+            showToast("Result verified on Supra blockchain!", "success");
+        } catch(e) {
+            badge.innerHTML = '<span class="text-xs text-red-500">Blockchain verification unavailable.</span>';
+        }
+    }
+
+    // ─── FILE UPLOAD ──────────────────────────────────────────
+    async function uploadFile(input, context) {
+        const file = input.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = async function(e) {
+            const base64 = e.target.result.split(',')[1];
+            if (context === 'id_card') document.getElementById('st-photo-display').src = e.target.result;
+            const idKey = (currentRole === 'student') ? activeStudentData?.SeatNo : currentUser?.id;
+            if (!idKey && context === 'id_card') { showToast("Error: User ID not found.", "error"); return; }
+            showToast("Uploading...", "success");
+            const res = await apiCall({ action: 'uploadPhoto', fileData: base64, fileName: file.name, mimeType: file.type, context, idKey });
+            showToast(res.success ? "Upload successful!" : "Upload failed: " + res.message, res.success ? "success" : "error");
+        };
+        reader.readAsDataURL(file);
+    }
+
+    // ─── ASSIGNMENTS ──────────────────────────────────────────
+    async function loadStudentAssignments(cls) {
+        const list = document.getElementById('student-assignment-list');
+        const res  = await apiCall({ action: 'getAssignments', cls });
+        if (res.success && res.data.length > 0) {
+            list.innerHTML = res.data.map(a => `
+                <div class="bg-gray-50 p-4 rounded border-l-4 border-blue-500 shadow-sm">
+                    <div class="flex justify-between flex-wrap gap-1">
+                        <h4 class="font-bold text-lg">${a.title}</h4>
+                        <span class="text-xs text-gray-500">${new Date(a.date).toLocaleDateString()}</span>
+                    </div>
+                    <p class="text-sm text-gray-600 mb-2 font-bold">By: ${a.teacher}</p>
+                    <p class="text-gray-700 whitespace-pre-wrap">${a.desc}</p>
+                </div>`).join('');
+        } else {
+            list.innerHTML = '<p class="text-gray-500">No assignments posted yet.</p>';
+        }
+    }
+
+    async function postAssignment() {
+        const title = document.getElementById('asgn-title').value.trim();
+        const desc  = document.getElementById('asgn-desc').value.trim();
+        const cls   = document.getElementById('asgn-class').value.trim();
+        if (!title || !cls) { showToast("Title and class required.", "error"); return; }
+        const btn = document.querySelector('button[onclick="postAssignment()"]');
+        btn.textContent = "Posting..."; btn.disabled = true;
+        const res = await apiCall({ action: 'postAssignment', title, desc, cls, teacher: currentUser?.name });
+        showToast(res.message, res.success ? "success" : "error");
+        btn.textContent = "Post Assignment"; btn.disabled = false;
+        if (res.success) { document.getElementById('asgn-title').value = ""; document.getElementById('asgn-desc').value = ""; }
+    }
+
+    // ─── ID CARD ──────────────────────────────────────────────
+    function generateCard(type) {
+        const d = (type === 'student' || type === 'gr-student') ? activeStudentData : currentUser;
+        if (!d) { showToast("No data available.", "error"); return; }
+        document.getElementById('st-name-display').textContent   = d.Name || d.name || 'N/A';
+        document.getElementById('st-father-display').textContent = d.FatherName || "Staff";
+        document.getElementById('st-class-display').textContent  = d.Class || d.designation || '';
+        document.getElementById('st-id-display').textContent     = d.SeatNo || d.GRNo || d.id || '';
+        document.getElementById('st-barcode-display').textContent = "*" + (d.SeatNo || d.id || '000') + "*";
+        document.getElementById('st-photo-display').src = d.PhotoURL || (type === 'staff'
+            ? "https://cdn-icons-png.flaticon.com/512/3135/3135768.png"
+            : "https://lh3.googleusercontent.com/d/1jnNNiAc2-DZUtVkABXetBkMGqB0olPju");
+        document.getElementById('idCardModal').classList.remove('hidden');
+    }
+
+    // ─── ATTENDANCE ───────────────────────────────────────────
+    async function loadAttendanceList() {
+        const cls  = document.getElementById('att-class').value.trim();
+        const grid = document.getElementById('attendance-grid');
+        grid.innerHTML = '<p class="col-span-4 text-gray-500 animate-pulse">Fetching students...</p>';
+        const res = await apiCall({ action: 'getStudentsByClass', cls });
+        grid.innerHTML = "";
+        if (res.success && res.data.length > 0) {
+            res.data.forEach(s => {
+                grid.innerHTML += `<label class="bg-white p-2 border rounded flex items-center justify-between cursor-pointer hover:bg-red-50">
+                    <span class="text-sm font-bold">${s.SeatNo} - ${s.Name}</span>
+                    <input type="checkbox" value="${s.SeatNo}" class="att-chk w-5 h-5 accent-red-600" aria-label="Mark ${s.Name} absent">
+                </label>`;
+            });
+            document.getElementById('btn-submit-att').classList.remove('hidden');
+        } else { grid.innerHTML = "<p class='text-gray-500 col-span-4'>No students found for this class.</p>"; }
+    }
+
+    async function submitAttendance() {
+        const cls     = document.getElementById('att-class').value.trim();
+        const absents = Array.from(document.querySelectorAll('.att-chk:checked')).map(c => c.value);
+        const res     = await apiCall({ action: 'markAttendance', date: new Date().toLocaleDateString(), class: cls, absentIds: absents });
+        showToast(res.message, res.success ? "success" : "error");
+    }
+
+    // ─── GRADING ──────────────────────────────────────────────
+    async function loadGradingList() {
+        const cls  = document.getElementById('res-class').value.trim();
+        const area = document.getElementById('grading-area');
+        area.innerHTML = '<p class="animate-pulse text-gray-500">Fetching...</p>';
+        const res = await apiCall({ action: 'getStudentsByClass', cls });
+        if (res.success && res.data.length > 0) {
+            const SUBJECTS = res.activeSubjects || ["English","Urdu"];
+            let html = `<table class="min-w-full text-sm text-left border-collapse"><thead class="bg-gray-100">
+                <tr><th class="p-2 border sticky left-0 bg-gray-100">Name</th>
+                ${SUBJECTS.map(s=>`<th class="p-2 border">${s}</th>`).join('')}
+                <th class="p-2 border">Total</th><th class="p-2 border sticky right-0">Save</th></tr></thead><tbody>`;
+            res.data.forEach(s => {
+                html += `<tr>
+                    <td class="p-2 border sticky left-0 bg-white font-bold">${s.SeatNo}<br><span class="font-normal text-xs">${s.Name}</span></td>
+                    ${SUBJECTS.map(sub => `<td class="p-2 border"><input type="number" min="0" max="100" data-seat="${s.SeatNo}" data-subject="${sub}" value="${s[sub.replace(/\s+/g,'')]||''}" class="w-14 p-1 border rounded subj-input-${s.SeatNo}" aria-label="${sub} marks for ${s.Name}"></td>`).join('')}
+                    <td class="p-2 border font-bold">${s.Total||0}</td>
+                    <td class="p-2 border sticky right-0 bg-white">
+                        <button onclick="saveStudentResult('${s.SeatNo}')" class="bg-green-600 text-white px-2 py-1 rounded text-xs">Save</button>
+                    </td></tr>`;
+            });
+            html += '</tbody></table>';
+            area.innerHTML = html;
+        } else { area.innerHTML = "<p class='text-gray-500'>No students found.</p>"; }
+    }
+
+    async function saveStudentResult(seat) {
+        const inputs = document.querySelectorAll(`.subj-input-${seat}`);
+        let marks = {};
+        inputs.forEach(i => marks[i.getAttribute('data-subject')] = i.value);
+        const res = await apiCall({ action: 'updateStudentResult', seatNo: seat, marks });
+        showToast(res.message, res.success ? "success" : "error");
+    }
+
+    // ─── GR SEARCH ────────────────────────────────────────────
+    async function searchGRData() {
+        const q   = document.getElementById('gr-search').value.trim();
+        const res = await apiCall({ action: 'getStudentFullDetail', query: q });
+        if (res.success) {
+            activeStudentData = res.data;
+            const d = res.data;
+            document.getElementById('gr-result-view').classList.remove('hidden');
+            document.getElementById('gr-data-content').innerHTML = Object.entries(d)
+                .filter(([k]) => !['PhotoURL','token'].includes(k))
+                .map(([k,v]) => `<p><b>${k}:</b> ${v}</p>`).join('');
+            document.getElementById('slc-name').textContent   = d.Name;
+            document.getElementById('slc-father').textContent = d.FatherName;
+            document.getElementById('slc-gr').textContent     = d.GRNo;
+            document.getElementById('slc-dob').textContent    = d.DateofBirth || "__________";
+            document.getElementById('slc-card').classList.remove('hidden');
+        } else { showToast(res.message, "error"); }
+    }
+
+    // ─── MARKSHEET RENDER ─────────────────────────────────────
+    function renderMarksheet(data) {
+        document.getElementById('marksheet-meta').innerHTML = `
+            <div><p class="text-gray-500 text-sm">Name:</p><p class="font-bold text-lg border-b">${data.Name}</p></div>
+            <div><p class="text-gray-500 text-sm">Father:</p><p class="font-bold text-lg border-b">${data.FatherName}</p></div>
+            <div><p class="text-gray-500 text-sm">Class:</p><p class="font-bold border-b">${data.Class}</p></div>
+            <div><p class="text-gray-500 text-sm">Seat No:</p><p class="font-bold border-b">${data.SeatNo}</p></div>`;
+
+        let total = 0, maxTotal = 0;
+        const subjects = data.activeSubjects || Object.keys(SUBJECT_MAX_MARKS);
+
+        document.getElementById('marksheet-body').innerHTML = subjects.map(k => {
+            const cleanKey = k.replace(/\s+/g,'');
+            if (data[cleanKey] !== undefined && data[cleanKey] !== "") {
+                const obtained = parseFloat(data[cleanKey]) || 0;
+                const max = SUBJECT_MAX_MARKS[cleanKey] || 75;
+                total += obtained; maxTotal += max;
+                const passFail = obtained >= 33 ? 'text-green-700' : 'text-red-600 font-bold';
+                return `<tr>
+                    <td class="border p-2">${k}</td>
+                    <td class="border p-2 text-right">${max}</td>
+                    <td class="border p-2 text-right font-bold ${passFail}">${obtained}</td>
+                </tr>`;
+            }
+            return '';
+        }).join('');
+
+        document.getElementById('marksheet-max-total').textContent = maxTotal;
+        document.getElementById('marksheet-total').textContent     = total;
+        const resultEl = document.getElementById('rResult');
+        resultEl.textContent  = data.Result || "Pending";
+        resultEl.className    = "text-2xl font-bold " + (data.Result === 'Pass' ? 'text-green-700' : data.Result === 'Fail' ? 'text-red-600' : 'text-gray-500');
+    }
+
+    // ─── ADMIN: STAFF & NEWS ──────────────────────────────────
+    async function addStaff() {
+        const data = {
+            action: 'adminUpdateStaff',
+            id: document.getElementById('adm-id').value.trim(),
+            password: document.getElementById('adm-pass').value.trim(),
+            name: document.getElementById('adm-name').value.trim(),
+            role: document.getElementById('adm-role').value
+        };
+        const res = await apiCall(data);
+        showToast(res.message, res.success ? "success" : "error");
+    }
+
+    async function postNews() {
+        const res = await apiCall({
+            action: 'postNews',
+            title: document.getElementById('news-title').value.trim(),
+            description: document.getElementById('news-desc').value.trim(),
+            category: document.getElementById('news-cat').value
+        });
+        showToast(res.message, res.success ? "success" : "error");
+    }
+
+    // ─── TABS ─────────────────────────────────────────────────
+    function showStudentTab(tab) {
+        ['result','assignments'].forEach(t => document.getElementById('st-tab-'+t)?.classList.add('hidden'));
+        document.getElementById('st-tab-'+tab)?.classList.remove('hidden');
+    }
+    function showTeacherTab(t) {
+        ['attendance','result','assignments'].forEach(x => document.getElementById('tab-'+x)?.classList.add('hidden'));
+        document.getElementById('tab-'+t)?.classList.remove('hidden');
+    }
+
+    // ─── PRINT ────────────────────────────────────────────────
+    function printArea(id) {
+        document.querySelectorAll('.print-now').forEach(e => e.classList.remove('print-now'));
+        const target = document.getElementById(id);
+        if (target) {
+            target.classList.add('print-now');
+            window.print();
+            setTimeout(() => target.classList.remove('print-now'), 1000);
+        }
+    }
+
+    // ─── BACKGROUND SLIDESHOW ─────────────────────────────────
+    function showBgSlide(index) {
+        if (bgPaused) return;
+        const slideEls = document.querySelectorAll(".bg-slide");
+        slideEls.forEach(s => s.classList.remove("active"));
+        if (slideEls[index]) slideEls[index].classList.add("active");
+        clearTimeout(bgTimer);
+        bgTimer = setTimeout(() => {
+            bgCurrentIndex = (index + 1) % slideEls.length;
+            showBgSlide(bgCurrentIndex);
+        }, 12000);
+    }
+
+    // ─── INIT ─────────────────────────────────────────────────
+    window.addEventListener('DOMContentLoaded', () => {
+        // Init icons (lazy-loaded)
+        if (typeof lucide !== 'undefined') lucide.createIcons();
+
+        // Background slideshow
+        const bgContainer = document.getElementById("bg-slideshow");
+        bgImages.forEach(src => {
+            const div = document.createElement("div");
+            div.className = "bg-slide";
+            div.style.backgroundImage = `url('${src}')`;
+            bgContainer.appendChild(div);
+        });
+        showBgSlide(0);
+
+        // Header image slider
+        let slideIdx = 0;
+        const slides = document.querySelectorAll('.slide');
+        if (slides.length > 1) {
+            setInterval(() => {
+                slides.forEach(s => s.classList.remove('active'));
+                slideIdx = (slideIdx + 1) % slides.length;
+                slides[slideIdx].classList.add('active');
+            }, 4000);
+        }
+
+        // Charts (defer to idle)
+        requestIdleCallback(() => {
+            const ctx1 = document.getElementById('studentChart');
+            const ctx2 = document.getElementById('teacherChart');
+            if (ctx1 && typeof Chart !== 'undefined') {
+                new Chart(ctx1, { type:'doughnut', data:{datasets:[{data:[85,15],backgroundColor:['#166534','#e5e7eb']}]}, options:{cutout:'75%',plugins:{legend:{display:false}}} });
+            }
+            if (ctx2 && typeof Chart !== 'undefined') {
+                new Chart(ctx2, { type:'doughnut', data:{datasets:[{data:[96,4],backgroundColor:['#1e40af','#e5e7eb']}]}, options:{cutout:'75%',plugins:{legend:{display:false}}} });
+            }
+        });
+
+        // Load Wall of Fame
+        loadSchoolToppers();
+
+        // Handle hash navigation (for back button / direct links)
+        const hash = window.location.hash.replace('#','');
+        if (hash && document.getElementById('section-' + hash)) showSection(hash);
+
+        // Icons may load after DOM, re-run after delay
+        setTimeout(() => { if (typeof lucide !== 'undefined') lucide.createIcons(); }, 500);
+    });
+    </script>
+</body>
+</html>
