@@ -1,4 +1,6 @@
 {
+  "framework": null,
+  "cleanUrls": true,
   "rewrites": [
     { "source": "/api/proxy", "destination": "/api/proxy" }
   ],
@@ -21,8 +23,3 @@
     }
   ]
 }
-```
-
-**5.** Scroll down, type commit message:
-```
-add vercel.json with security headers
