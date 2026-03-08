@@ -1,7 +1,6 @@
-// pages/timetable.js  ← place this file in your Next.js pages/ folder
-// If you use the App Router (app/ folder), rename to page.js and put in app/timetable/
+'use client';
 
-import Head from 'next/head';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 
 export default function Timetable() {
   return (
