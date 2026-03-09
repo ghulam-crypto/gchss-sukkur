@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>GCHSS-Sukkur — Timetable</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:#f7f8fa;color:#1a1a2e;min-height:100vh}
+:root{
+  --bg:#f7f8fa;--surface:#ffffff;--surface2:#f0f2f5;--border:#e5e7eb;
+  --primary:#10a37f;--primary-light:#e6f7f4;--primary-dark:#0d8a6a;
+  --blue:#1a73e8;--blue-light:#e8f0fe;
+  --red:#ef4444;--red-light:#fef2f2;
+  --amber:#f59e0b;--amber-light:#fffbeb;
+  --purple:#8b5cf6;--purple-light:#f5f3ff;
+  --text:#1a1a2e;--text2:#6b7280;--text3:#9ca3af;
+  --radius:12px;--radius-sm:8px;--shadow:0 1px 3px rgba(0,0,0,.08),0 1px 2px rgba(0,0,0,.05);
+  --shadow-md:0 4px 16px rgba(0,0,0,.08);
+}
+button{font-family:'DM Sans',sans-serif;cursor:pointer;transition:all .15s}
+input,select{font-family:'DM Sans',sans-serif}
+.fade-in{animation:fadeIn .25s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+::-webkit-scrollbar{height:5px;width:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:#d1d5db;border-radius:99px}
+.chip{display:inline-flex;align-items:center;gap:4px;border-radius:999px;padding:3px 10px;font-size:11px;font-weight:600}
+.btn{border:none;border-radius:var(--radius-sm);padding:8px 16px;font-size:13px;font-weight:600;display:inline-flex;align-items:center;gap:6px}
+.btn-primary{background:var(--primary);color:#fff}
+.btn-primary:hover{background:var(--primary-dark)}
+.btn-ghost{background:transparent;color:var(--text2);border:1px solid var(--border)}
+.btn-ghost:hover{background:var(--surface2)}
+.card{background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow);border:1px solid var(--border)}
+table{border-collapse:collapse;width:100%}
+th,td{border:1px solid var(--border)}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const {useState,useEffect,useMemo,useCallback,useRef} = React;
+
+// ── SVG Icons ──────────────────────────────────────────────────────────────
+const Icon = ({name, size=16, color='currentColor', style={}}) => {
+  const icons = {
+    calendar: <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={style}><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>,
+    grid: <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={style}><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>,
+    userX: <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={style}><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="17" y1="8" x2="23" y2="14"/><line x1="23" y1="8" x2="17" y2="14"/></svg>,
+    users: <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={style}><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 1-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>,
+    settings: <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={style}><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>,
+    book: <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={style}><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>,
+    printer: <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={style}><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>,
+    upload: <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={style}><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>,
+    plus: <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={style}><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>,
+    trash: <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={style}><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>,
+    search: <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={style}><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>,
+    x: <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={style}><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>,
+    check: <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={style}><polyline points="20 6 9 17 4 12"/></svg>,
+    alert: <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={style}><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>,
+    swap: <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={style}><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>,
+    userPlus: <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={style}><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>,
+    list: <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={style}><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>,
+    edit: <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={style}><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>,
+    coffee: <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={style}><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>,
+    sun: <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={style}><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>,
+  };
+  return icons[name] || null;
+};
+
+// ── Data ────────────────────────────────────────────────────────────────────
+const INITIAL_CLASSES = ['VI-A','VI-B','VI-C','VII-A','VII-B','VII-C','VIII-A','VIII-B','VIII-C','IX-A','IX-B','IX-C','X-A','X-B','X-C'];
+
+const INITIAL_ASSIGNMENTS = {
+  'VI-A':   {English:'Abdul Fattah Channa',Maths:'Kanwar Lal','G.Science':'Allah Wasayo',Urdu:'Zia Saud',Sindhi:'Muhammad Ali Bullo',Islamiat:'Muhammad Ali Napir','Social Study':'A. Ghafoor Qureshi'},
+  'VI-B':   {English:'Ghous Bux',Maths:'Kanwar Lal','G.Science':'Allah Wasayo',Urdu:'Zia Saud',Sindhi:'Muhammad Ali Bullo',Islamiat:'Ahsan Ali','Social Study':'A. Ghafoor Qureshi'},
+  'VI-C':   {English:'Zahoor Ahmed',Maths:'Zahoor Ahmed','G.Science':'Allah Wasayo',Urdu:'Muhammad Nawaz',Sindhi:'Muhammad Ali Bullo',Islamiat:'Ahsan Ali','Social Study':'A. Ghafoor Qureshi'},
+  'VII-A':  {English:'Kanwar Lal',Maths:'Awais Khawar','G.Science':'Ali Gohar',Urdu:'Muhammad Nawaz',Sindhi:'Abdul Fattah Channa',Islamiat:'Muhammad Ali Napir','Social Study':'Waseem Ahmed'},
+  'VII-B':  {English:'Zia Saud',Maths:'Sarfaraz Ali','G.Science':'Ali Gohar',Urdu:'Muhammad Nawaz',Sindhi:'Abdul Fattah Channa',Islamiat:'Muhammad Ali Napir','Social Study':'Waseem Ahmed'},
+  'VII-C':  {English:'Faiz Adil',Maths:'Awais Khawar','G.Science':'Mazhar Ali',Urdu:'Ayazuddin',Islamiat:'Ahsan Ali Channa','Social Study':'Waseem Ahmed'},
+  'VIII-A': {English:'Mazhar Ali',Maths:'Nazeer Ahmed','G.Science':'Ghulam Mustafa',Urdu:'Muhammad Sajid',Sindhi:'Abdul Fattah Memon',Islamiat:'Abdul Rehman Memon','Social Study':'Tanweer Hassan'},
+  'VIII-B': {English:'Ahsan Nabi',Maths:'Nazeer Ahmed','G.Science':'Ghulam Mustafa',Urdu:'Muhammad Sajid',Sindhi:'Abdul Fattah Memon',Islamiat:'Abdul Rehman Memon','Social Study':'Tanweer Hassan'},
+  'VIII-C': {English:'Aurangzaib',Maths:'Nazeer Ahmed','G.Science':'Ghulam Mustafa',Urdu:'Muhammad Sajid',Sindhi:'Abdul Fattah Memon',Islamiat:'Abdul Rehman Memon','Social Study':'Tanweer Hassan'},
+  'IX-A':   {English:'Fayaz Ali','E.Math':'Zahoor Ahmed',Physics:'Sarfaraz',Chemistry:'Bharat Lal',Biology:'Amir Mustafa',Islamiat:'A. Ghafoor Channa',Sindhi:'Munwar Ali'},
+  'IX-B':   {English:'Asif Ali','E.Math':'Farhan Nabi',Physics:'Fayaz Ali',Chemistry:'Bharat Lal',Biology:'Ghulam Mehdi',Islamiat:'A. Ghafoor Channa',Sindhi:'Munwar Ali'},
+  'IX-C':   {English:'Amir Mustafa','E.Math':'Aurangzaib',Physics:'Sarfaraz',Chemistry:'Ahsan Nabi',Biology:'Ghulam Mehdi',Islamiat:'Abdul Samad',Sindhi:'Mazhar Ali'},
+  'X-A':    {English:'Bilal Hassan','E.Math':'G. Mujtaba Azhar',Physics:'Farhan Nabi',Chemistry:'Ramesh Kumar',Biology:'Shoaib','P.S':'Rahim Bux',Urdu:'Munwar Ali'},
+  'X-B':    {English:'Ayazuddin','E.Math':'G. Mujtaba Azhar',Physics:'Farhan Nabi',Chemistry:'Ramesh Kumar',Biology:'Sandeep Kumar','P.S':'Rahim Bux',Urdu:'Awais Khawar'},
+  'X-C':    {English:'Ghulam Mehdi','E.Math':'G. Mujtaba Azhar',Physics:'Bilal Hassan',Chemistry:'Sajjad Ali Mirani',Biology:'Manohar Lal','P.S':'Aurangzaib',Urdu:'Faiz Adil'},
+};
+
+// Extra pool teachers (not assigned to classes, available for substitution)
+const INITIAL_EXTRA_TEACHERS = ['Imtiaz Ahmed','Rashid Hussain','Noman Siddiqui','Saima Batool','Rubina Khatoon'];
+
+const DAYS = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+
+const DEFAULT_TIMINGS = {
+  regular:[
+    {start:'08:00',end:'08:45'},{start:'08:45',end:'09:30'},{start:'09:30',end:'10:15'},
+    {start:'10:45',end:'11:30'},{start:'11:30',end:'12:15'},{start:'12:15',end:'01:00'},{start:'01:00',end:'01:45'}
+  ],
+  friday:[
+    {start:'08:00',end:'08:50'},{start:'08:50',end:'09:40'},{start:'09:40',end:'10:30'},
+    {start:'11:00',end:'11:50'},{start:'11:50',end:'12:40'}
+  ]
+};
+
+const SC = {
+  English:'#10a37f',Maths:'#1a73e8','E.Math':'#1a73e8','G.Science':'#0f9d58',
+  Physics:'#f9ab00',Chemistry:'#ea4335',Biology:'#8b5cf6',Urdu:'#e91e8c',
+  Sindhi:'#ff6d00',Islamiat:'#00897b','Social Study':'#1565c0','P.S':'#6d28d9'
+};
+const gc = s => SC[s]||'#6b7280';
+
+// ── App ──────────────────────────────────────────────────────────────────────
+function App() {
+  const [tab, setTab] = useState('timetable');
+  const [assignments, setAssignments] = useState(INITIAL_ASSIGNMENTS);
+  const [classes, setClasses] = useState(INITIAL_CLASSES);
+  const [extraTeachers, setExtraTeachers] = useState(INITIAL_EXTRA_TEACHERS);
+  const [newTeacherName, setNewTeacherName] = useState('');
+  const [baseTT, setBaseTT] = useState({});
+  const [absences, setAbsences] = useState({});
+  const [selClass, setSelClass] = useState(INITIAL_CLASSES[0]);
+  const [masterDay, setMasterDay] = useState('Monday');
+  const [timings, setTimings] = useState(DEFAULT_TIMINGS);
+  const [absDay, setAbsDay] = useState('Monday');
+  const [search, setSearch] = useState('');
+  const [subView, setSubView] = useState('grid'); // 'grid' | 'list'
+
+  // All teachers from assignments + extra pool
+  const teachers = useMemo(() => {
+    const fromAssign = new Set(Object.values(assignments).flatMap(o=>Object.values(o)));
+    const allNames = [...new Set([...fromAssign, ...extraTeachers])].filter(n=>n&&n!=='N/A').sort();
+    return allNames.map((name,i)=>({id:'t'+i,name,isExtra:!fromAssign.has(name)}));
+  },[assignments,extraTeachers]);
+
+  // ── Generate timetable with min 3, max 4 periods per teacher ─────────────
+  const genTT = useCallback(()=>{
+    const tt={};
+    DAYS.forEach(day=>{
+      tt[day]={};
+      const maxP = day==='Friday'?5:7;
+      const teacherCount = {}; // track periods per teacher per day
+      teachers.forEach(t=>{ teacherCount[t.id]=0; });
+
+      for(let p=1;p<=maxP;p++){
+        tt[day][p]={};
+        const busy=new Set();
+
+        // Period 1: English first
+        if(p===1){
+          classes.forEach(cls=>{
+            const t=teachers.find(x=>x.name===assignments[cls]?.English);
+            if(t&&!busy.has(t.id)&&teacherCount[t.id]<4){
+              tt[day][p][cls]={teacherId:t.id,subject:'English',isSub:false};
+              busy.add(t.id);teacherCount[t.id]++;
+            }
+          });
+        }
+
+        classes.forEach(cls=>{
+          if(tt[day][p][cls])return;
+          const ca=assignments[cls]||{};
+          const all=Object.keys(ca);
+          const pool=all.filter(s=>s!=='English');
+          const subjects=pool.length?pool:all;
+
+          // Try preferred subject rotation
+          const sub=subjects[(p+DAYS.indexOf(day)+classes.indexOf(cls))%subjects.length];
+          const t=teachers.find(x=>x.name===ca[sub]);
+          if(t&&!busy.has(t.id)&&teacherCount[t.id]<4){
+            tt[day][p][cls]={teacherId:t.id,subject:sub,isSub:false};
+            busy.add(t.id);teacherCount[t.id]++;
+          } else {
+            // fallback: any available teacher for this class
+            const fb=all.find(s=>{
+              const tx=teachers.find(x=>x.name===ca[s]);
+              return tx&&!busy.has(tx.id)&&teacherCount[tx.id]<4;
+            });
+            if(fb){
+              const tx=teachers.find(x=>x.name===ca[fb]);
+              tt[day][p][cls]={teacherId:tx.id,subject:fb,isSub:false};
+              busy.add(tx.id);teacherCount[tx.id]++;
+            } else {
+              tt[day][p][cls]=null;
+            }
+          }
+        });
+      }
+
+      // Ensure every assigned teacher has at least 3 periods
+      teachers.filter(t=>!t.isExtra).forEach(t=>{
+        if(teacherCount[t.id]<3){
+          // find a free slot and assign
+          outer:for(let p=1;p<=maxP;p++){
+            for(const cls of classes){
+              if(!tt[day][p][cls]){
+                tt[day][p][cls]={teacherId:t.id,subject:'Free Period',isSub:false};
+                teacherCount[t.id]++;
+                if(teacherCount[t.id]>=3) break outer;
+              }
+            }
+          }
+        }
+      });
+    });
+    setBaseTT(tt);setAbsences({});
+  },[assignments,teachers,classes]);
+
+  useEffect(()=>{genTT();},[genTT]);
+
+  // ── Substitute resolution ─────────────────────────────────────────────────
+  const dispTT = useMemo(()=>{
+    if(!Object.keys(baseTT).length)return{};
+    const f=JSON.parse(JSON.stringify(baseTT));
+    DAYS.forEach(day=>{
+      const abs=absences[day]||[];
+      const maxP=day==='Friday'?5:7;
+      for(let p=1;p<=maxP;p++){
+        const busy=new Set();
+        classes.forEach(c=>{const s=f[day]?.[p]?.[c];if(s&&!abs.includes(s.teacherId))busy.add(s.teacherId);});
+        classes.forEach(c=>{
+          const s=f[day]?.[p]?.[c];
+          if(s&&abs.includes(s.teacherId)){
+            // prefer extra pool teachers first, then any available
+            const poolSubs=teachers.filter(t=>t.isExtra&&!abs.includes(t.id)&&!busy.has(t.id));
+            const otherSubs=teachers.filter(t=>!t.isExtra&&!abs.includes(t.id)&&!busy.has(t.id));
+            const subs=[...poolSubs,...otherSubs];
+            if(subs.length){
+              const sub=subs[0];
+              f[day][p][c]={...s,teacherId:sub.id,isSub:true,originalTeacherId:s.teacherId};
+              busy.add(sub.id);
+            } else {
+              f[day][p][c]={...s,teacherId:'none',isSub:true,originalTeacherId:s.teacherId};
+            }
+          }
+        });
+      }
+    });
+    return f;
+  },[baseTT,absences,teachers,classes]);
+
+  // ── Substitute list for a given day ───────────────────────────────────────
+  const getSubList = (day) => {
+    const maxP=day==='Friday'?5:7;
+    const subs=[];
+    for(let p=1;p<=maxP;p++){
+      classes.forEach(c=>{
+        const sl=dispTT[day]?.[p]?.[c];
+        if(sl?.isSub){
+          subs.push({
+            period:p, cls:c, subject:sl.subject,
+            subTeacher:gT(sl.teacherId)?.name||'Unassigned',
+            origTeacher:gT(sl.originalTeacherId)?.name||'—'
+          });
+        }
+      });
+    }
+    return subs;
+  };
+
+  const toggleAbs=(day,tid)=>setAbsences(prev=>{
+    const arr=prev[day]||[];
+    return arr.includes(tid)?{...prev,[day]:arr.filter(x=>x!==tid)}:{...prev,[day]:[...arr,tid]};
+  });
+
+  const gT=id=>teachers.find(t=>t.id===id);
+  const filtTeachers=useMemo(()=>{
+    const q=search.trim().toLowerCase();
+    return q?teachers.filter(t=>t.name.toLowerCase().includes(q)):teachers;
+  },[teachers,search]);
+
+  const absTot=Object.values(absences).reduce((s,a)=>s+a.length,0);
+
+  const addExtraTeacher=()=>{
+    const name=newTeacherName.trim();
+    if(!name||extraTeachers.includes(name))return;
+    setExtraTeachers(prev=>[...prev,name]);
+    setNewTeacherName('');
+  };
+  const removeExtraTeacher=(name)=>setExtraTeachers(prev=>prev.filter(n=>n!==name));
+
+  // ── Print ─────────────────────────────────────────────────────────────────
+  const buildPrintHTML=(day)=>{
+    const maxP=day==='Friday'?5:7;
+    const dayT=day==='Friday'?timings.friday:timings.regular;
+    const absList=(absences[day]||[]).map(id=>gT(id)?.name).filter(Boolean);
+    const subList=getSubList(day);
+
+    const hcells=Array.from({length:maxP},(_,i)=>{
+      const t=dayT[i]||{};
+      const brk=i===3?`<th style="background:#e6f7f4;color:#10a37f;border:1px solid #ddd;padding:3px;font-size:9px;min-width:18px">☕</th>`:'';
+      return `${brk}<th style="background:#1a1a2e;color:#fff;padding:7px 5px;border:1px solid #2d2d4e;font-size:11px;min-width:105px">P${i+1}<br><span style="font-weight:400;font-size:9px">${t.start||''}–${t.end||''}</span></th>`;
+    }).join('');
+
+    const rows=classes.map(c=>{
+      const cells=Array.from({length:maxP},(_,i)=>{
+        const p=i+1;const sl=dispTT[day]?.[p]?.[c];
+        const brk=i===3?`<td style="background:#e6f7f4;border:1px solid #ddd;width:18px"></td>`:'';
+        if(!sl)return`${brk}<td style="border:1px solid #ddd;color:#ccc;text-align:center;font-size:10px;padding:4px">—</td>`;
+        const col=gc(sl.subject);
+        return`${brk}<td style="border:1px solid #ddd;padding:5px 6px;vertical-align:top"><div style="border-left:3px solid ${col};padding-left:4px"><div style="font-weight:700;color:${col};font-size:11px">${sl.subject}</div><div style="color:#444;font-size:10px">${gT(sl.teacherId)?.name||'—'}</div>${sl.isSub?`<span style="font-size:9px;background:#e6f7f4;color:#10a37f;padding:1px 4px;border-radius:3px;font-weight:700">SUB ← ${gT(sl.originalTeacherId)?.name||'?'}</span>`:''}</div></td>`;
+      }).join('');
+      return`<tr><td style="padding:6px 9px;font-weight:700;font-size:12px;border:1px solid #ddd;background:#fafafa;white-space:nowrap">${c}</td>${cells}</tr>`;
+    }).join('');
+
+    const subRows=subList.map(s=>`<tr><td style="padding:6px 10px;border:1px solid #ddd;font-weight:700;color:#10a37f">${s.period}</td><td style="padding:6px 10px;border:1px solid #ddd;font-weight:700">${s.cls}</td><td style="padding:6px 10px;border:1px solid #ddd">${s.subject}</td><td style="padding:6px 10px;border:1px solid #ddd;color:#ea4335;text-decoration:line-through">${s.origTeacher}</td><td style="padding:6px 10px;border:1px solid #ddd;color:#10a37f;font-weight:700">${s.subTeacher}</td></tr>`).join('');
+
+    return`<!DOCTYPE html><html><head><meta charset="utf-8"><title>Timetable – ${day}</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;600;700&display=swap" rel="stylesheet"/>
+<style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:'DM Sans',Arial,sans-serif;padding:14px;background:#fff}table{border-collapse:collapse;width:100%}@page{size:A4 landscape;margin:8mm}</style>
+</head><body>
+<div style="text-align:center;margin-bottom:12px;padding-bottom:10px;border-bottom:3px solid #10a37f">
+  <div style="font-size:22px;font-weight:700;color:#1a1a2e">Govt. Comprehensive Higher Secondary School</div>
+  <div style="font-size:12px;color:#6b7280;margin-top:3px">Master Timetable — <b>${day}</b> | Session 2025-26</div>
+  ${absList.length?`<div style="font-size:11px;color:#ea4335;margin-top:4px;font-weight:600">⚠ Absent: ${absList.join(', ')}</div>`:''}
+</div>
+<table>
+  <thead><tr>
+    <th style="background:#1a1a2e;color:#fff;padding:8px 10px;border:1px solid #2d2d4e;text-align:left;font-size:12px">Class</th>
+    ${hcells}
+  </tr></thead>
+  <tbody>${rows}</tbody>
+</table>
+${subList.length?`
+<div style="margin-top:16px">
+  <div style="font-size:13px;font-weight:700;color:#1a1a2e;margin-bottom:8px;padding-bottom:4px;border-bottom:2px solid #10a37f">📋 Substitute Teachers List — ${day}</div>
+  <table>
+    <thead><tr style="background:#f0fdf9">
+      <th style="padding:7px 10px;border:1px solid #ddd;color:#6b7280;font-size:11px;text-align:left">Period</th>
+      <th style="padding:7px 10px;border:1px solid #ddd;color:#6b7280;font-size:11px;text-align:left">Class</th>
+      <th style="padding:7px 10px;border:1px solid #ddd;color:#6b7280;font-size:11px;text-align:left">Subject</th>
+      <th style="padding:7px 10px;border:1px solid #ddd;color:#6b7280;font-size:11px;text-align:left">Absent Teacher</th>
+      <th style="padding:7px 10px;border:1px solid #ddd;color:#6b7280;font-size:11px;text-align:left">Substitute</th>
+    </tr></thead>
+    <tbody>${subRows}</tbody>
+  </table>
+</div>`:''}
+<div style="margin-top:10px;font-size:10px;color:#9ca3af;text-align:right">Printed: ${new Date().toLocaleString()}</div>
+</body></html>`;
+  };
+
+  const handlePrint=()=>{
+    const html=buildPrintHTML(masterDay);
+    const w=window.open('','_blank','width=1200,height=750');
+    if(w){w.document.write(html);w.document.close();w.focus();setTimeout(()=>w.print(),500);}
+    else{const blob=new Blob([html],{type:'text/html'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`Timetable-${masterDay}.html`;a.click();}
+  };
+
+  const handleFileUpload=e=>{
+    const file=e.target.files[0];if(!file)return;
+    const reader=new FileReader();
+    reader.onload=ev=>{
+      const rows=ev.target.result.split('\n').filter(r=>r.trim());
+      const na={};const nc=new Set();
+      rows.slice(1).forEach(row=>{const [cls,subj,tch]=row.split(',').map(s=>s?.trim());if(cls&&subj&&tch){if(!na[cls])na[cls]={};na[cls][subj]=tch;nc.add(cls);}});
+      if(Object.keys(na).length){setAssignments(na);const cl=[...nc].sort();setClasses(cl);setSelClass(cl[0]);}
+    };
+    reader.readAsText(file);
+  };
+
+  // ── Styles helpers ──────────────────────────────────────────────────────
+  const tabStyle=(id)=>({
+    display:'flex',alignItems:'center',gap:7,padding:'10px 16px',fontSize:13,fontWeight:500,
+    border:'none',background:'none',cursor:'pointer',whiteSpace:'nowrap',borderRadius:8,
+    color:tab===id?'var(--primary)':'var(--text2)',
+    background:tab===id?'var(--primary-light)':'transparent',
+    transition:'all .15s'
+  });
+
+  const dayBtnStyle=(d,active)=>({
+    padding:'6px 14px',borderRadius:20,fontSize:12,fontWeight:600,
+    border:`1.5px solid ${active?'var(--primary)':'var(--border)'}`,
+    background:active?'var(--primary)':'var(--surface)',
+    color:active?'#fff':'var(--text2)',cursor:'pointer',transition:'all .15s'
+  });
+
+  const classBtnStyle=(c,active)=>({
+    padding:'5px 13px',borderRadius:20,fontSize:12,fontWeight:600,
+    border:`1.5px solid ${active?'var(--primary)':'var(--border)'}`,
+    background:active?'var(--primary)':'var(--surface)',
+    color:active?'#fff':'var(--text2)',cursor:'pointer',transition:'all .15s'
+  });
+
+  // ── Render ────────────────────────────────────────────────────────────────
+  const TABS = [
+    {id:'timetable', icon:'calendar', label:'Class Wise'},
+    {id:'master',    icon:'grid',     label:'Master View'},
+    {id:'substitute',icon:'swap',     label:'Substitutes'+(absTot>0?` (${absTot})`:'')},
+    {id:'absence',   icon:'userX',    label:'Absences'},
+    {id:'teachers',  icon:'userPlus', label:'Teachers'},
+    {id:'timings',   icon:'settings', label:'Settings'},
+    {id:'workload',  icon:'book',     label:'Workload'},
+  ];
+
+  return (
+    <div style={{display:'flex',flexDirection:'column',minHeight:'100vh',background:'var(--bg)'}}>
+
+      {/* ── HEADER ── */}
+      <header style={{background:'var(--surface)',borderBottom:'1px solid var(--border)',padding:'0 20px',position:'sticky',top:0,zIndex:100,boxShadow:'0 1px 3px rgba(0,0,0,.05)'}}>
+        <div style={{maxWidth:1400,margin:'0 auto',display:'flex',alignItems:'center',gap:16,height:56}}>
+          <div style={{display:'flex',alignItems:'center',gap:10,flex:1}}>
+            <div style={{width:32,height:32,background:'linear-gradient(135deg,#10a37f,#1a73e8)',borderRadius:8,display:'flex',alignItems:'center',justifyContent:'center'}}>
+              <Icon name="sun" size={17} color="#fff"/>
+            </div>
+            <div>
+              <div style={{fontWeight:700,fontSize:15,color:'var(--text)',lineHeight:1.2}}>GCHSS-SUKKUR</div>
+              <div style={{fontSize:10,color:'var(--text3)',letterSpacing:.3}}>TIMETABLE SYSTEM</div>
+            </div>
+          </div>
+          <div style={{display:'flex',gap:8}}>
+            <label style={{display:'flex',alignItems:'center',gap:6,padding:'7px 14px',borderRadius:8,border:'1px solid var(--border)',background:'var(--surface)',fontSize:12,fontWeight:600,cursor:'pointer',color:'var(--text2)',transition:'all .15s'}}>
+              <Icon name="upload" size={13}/> Import CSV
+              <input type="file" accept=".csv" onChange={handleFileUpload} style={{display:'none'}}/>
+            </label>
+            <button onClick={handlePrint} style={{display:'flex',alignItems:'center',gap:6,padding:'7px 14px',borderRadius:8,background:'var(--primary)',color:'#fff',border:'none',fontSize:12,fontWeight:600,cursor:'pointer'}}>
+              <Icon name="printer" size={13} color="#fff"/> Print — {masterDay}
+            </button>
+          </div>
+        </div>
+        {/* Nav tabs */}
+        <div style={{maxWidth:1400,margin:'0 auto',display:'flex',gap:2,overflowX:'auto',paddingBottom:1}}>
+          {TABS.map(t=>(
+            <button key={t.id} onClick={()=>setTab(t.id)} style={tabStyle(t.id)}>
+              <Icon name={t.icon} size={14} color={tab===t.id?'var(--primary)':'var(--text3)'}/>
+              {t.label}
+            </button>
+          ))}
+        </div>
+      </header>
+
+      <main style={{flex:1,padding:'20px',maxWidth:1400,margin:'0 auto',width:'100%'}} className="fade-in">
+
+        {/* ══ CLASS WISE ══ */}
+        {tab==='timetable'&&(
+          <div>
+            <div style={{display:'flex',flexWrap:'wrap',gap:6,marginBottom:18}}>
+              {classes.map(c=><button key={c} onClick={()=>setSelClass(c)} style={classBtnStyle(c,selClass===c)}>{c}</button>)}
+            </div>
+            <div className="card">
+              <div style={{padding:'14px 20px',borderBottom:'1px solid var(--border)',display:'flex',alignItems:'center',gap:8}}>
+                <Icon name="calendar" size={16} color="var(--primary)"/>
+                <span style={{fontWeight:700,fontSize:15}}>Class {selClass} — Weekly Timetable</span>
+              </div>
+              <div style={{overflowX:'auto'}}>
+                <table>
+                  <thead>
+                    <tr style={{background:'#1a1a2e'}}>
+                      <th style={{padding:'10px 14px',textAlign:'left',color:'#fff',fontWeight:600,fontSize:12,minWidth:90}}>Day</th>
+                      {[1,2,3,'B',4,5,6,7].map((h,i)=>(
+                        <th key={i} style={{padding:'9px 8px',color:h==='B'?'var(--primary)':'#fff',background:h==='B'?'var(--primary-light)':undefined,fontWeight:600,minWidth:h==='B'?34:115,fontSize:11}}>
+                          {h==='B'?<Icon name="coffee" size={13} color="var(--primary)"/>:`P${h}`}
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {DAYS.map((day,di)=>{
+                      const maxP=day==='Friday'?5:7;
+                      const dayT=day==='Friday'?timings.friday:timings.regular;
+                      return(
+                        <tr key={day} style={{background:di%2===0?'var(--surface)':'#fafbfc'}}>
+                          <td style={{padding:'10px 14px',fontWeight:600,fontSize:13,whiteSpace:'nowrap'}}>{day}</td>
+                          {[1,2,3,'B',4,5,6,7].map((p,ci)=>{
+                            if(p==='B')return<td key="br" style={{background:'var(--primary-light)',textAlign:'center',padding:6}}><Icon name="coffee" size={12} color="var(--primary)"/></td>;
+                            const isOff=p>maxP;
+                            const tIdx=p<=3?p-1:p-2;
+                            const time=dayT[tIdx]||{};
+                            const sl=dispTT[day]?.[p]?.[selClass];
+                            return(
+                              <td key={p} style={{padding:6,verticalAlign:'top',background:isOff?'#f9fafb':undefined}}>
+                                {isOff?<div style={{textAlign:'center',color:'#e5e7eb',padding:8}}>—</div>
+                                  :sl?(
+                                    <div style={{borderRadius:8,padding:'7px 9px',background:gc(sl.subject)+'12',borderLeft:`3px solid ${gc(sl.subject)}`}}>
+                                      <div style={{fontSize:9,color:'var(--text3)',marginBottom:2,fontFamily:'DM Mono,monospace'}}>{time.start}–{time.end}</div>
+                                      <div style={{fontWeight:700,fontSize:12,color:gc(sl.subject)}}>{sl.subject}</div>
+                                      <div style={{fontSize:11,color:'var(--text2)',marginTop:2}}>{gT(sl.teacherId)?.name||'—'}</div>
+                                      {sl.isSub&&<div style={{fontSize:9,background:'var(--primary-light)',color:'var(--primary)',borderRadius:4,padding:'2px 5px',marginTop:3,display:'inline-flex',alignItems:'center',gap:3,fontWeight:700}}><Icon name="swap" size={9} color="var(--primary)"/>SUB</div>}
+                                    </div>
+                                  ):<div style={{textAlign:'center',color:'#e5e7eb',padding:8}}>—</div>}
+                              </td>
+                            );
+                          })}
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ══ MASTER VIEW ══ */}
+        {tab==='master'&&(
+          <div>
+            <div style={{display:'flex',flexWrap:'wrap',gap:6,marginBottom:18,alignItems:'center'}}>
+              {DAYS.map(d=><button key={d} onClick={()=>setMasterDay(d)} style={dayBtnStyle(d,masterDay===d)}>{d}</button>)}
+              <button onClick={handlePrint} style={{marginLeft:'auto',display:'flex',alignItems:'center',gap:6,padding:'7px 16px',borderRadius:8,background:'var(--primary)',color:'#fff',border:'none',fontSize:12,fontWeight:600,cursor:'pointer'}}>
+                <Icon name="printer" size={13} color="#fff"/> Print This Day
+              </button>
+            </div>
+            {(absences[masterDay]||[]).length>0&&(
+              <div style={{background:'var(--red-light)',border:'1px solid #fecaca',borderRadius:10,padding:'10px 16px',marginBottom:14,display:'flex',alignItems:'center',gap:8,fontSize:12,color:'var(--red)'}}>
+                <Icon name="alert" size={14} color="var(--red)"/>
+                <strong>Absent today:</strong> {(absences[masterDay]||[]).map(id=>gT(id)?.name).filter(Boolean).join(', ')}
+              </div>
+            )}
+            <div className="card">
+              <div style={{padding:'14px 20px',borderBottom:'1px solid var(--border)',display:'flex',alignItems:'center',gap:8}}>
+                <Icon name="grid" size={16} color="var(--primary)"/>
+                <span style={{fontWeight:700,fontSize:15}}>Master Schedule — {masterDay}</span>
+              </div>
+              <div style={{overflowX:'auto'}}>
+                <table>
+                  <thead>
+                    <tr style={{background:'#1a1a2e'}}>
+                      <th style={{padding:'10px 12px',textAlign:'left',color:'#fff',fontWeight:600,fontSize:12,minWidth:70}}>Class</th>
+                      {Array.from({length:masterDay==='Friday'?5:7},(_,i)=>{
+                        const p=i+1,dayT=masterDay==='Friday'?timings.friday:timings.regular,t=dayT[i]||{};
+                        return[
+                          p===4&&<th key="br" style={{background:'var(--primary-light)',padding:'6px 4px',minWidth:26}}><Icon name="coffee" size={11} color="var(--primary)"/></th>,
+                          <th key={p} style={{padding:'9px 8px',color:'#fff',fontWeight:600,fontSize:11,minWidth:108}}>P{p}<br/><span style={{fontWeight:400,fontSize:9,fontFamily:'DM Mono,monospace'}}>{t.start}–{t.end}</span></th>
+                        ];
+                      })}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {classes.map((c,ci)=>(
+                      <tr key={c} style={{background:ci%2===0?'var(--surface)':'#fafbfc'}}>
+                        <td style={{padding:'7px 12px',fontWeight:700,fontSize:12}}>{c}</td>
+                        {Array.from({length:masterDay==='Friday'?5:7},(_,i)=>{
+                          const p=i+1,sl=dispTT[masterDay]?.[p]?.[c];
+                          return[
+                            p===4&&<td key="br" style={{background:'var(--primary-light)'}}></td>,
+                            <td key={p} style={{padding:5,verticalAlign:'top'}}>
+                              {sl?(
+                                <div style={{borderRadius:6,padding:'4px 7px',background:gc(sl.subject)+'10',borderLeft:`2px solid ${gc(sl.subject)}`}}>
+                                  <div style={{fontWeight:700,color:gc(sl.subject),fontSize:11}}>{sl.subject}</div>
+                                  <div style={{color:'var(--text2)',fontSize:10,marginTop:1}}>{gT(sl.teacherId)?.name||'—'}</div>
+                                  {sl.isSub&&<span style={{fontSize:9,color:'var(--primary)',fontWeight:700}}>⇄ SUB</span>}
+                                </div>
+                              ):<span style={{color:'var(--border)'}}>—</span>}
+                            </td>
+                          ];
+                        })}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ══ SUBSTITUTES TAB ══ */}
+        {tab==='substitute'&&(
+          <div>
+            <div style={{display:'flex',flexWrap:'wrap',gap:6,marginBottom:18,alignItems:'center'}}>
+              {DAYS.map(d=>{
+                const cnt=getSubList(d).length;
+                return<button key={d} onClick={()=>setMasterDay(d)} style={{...dayBtnStyle(d,masterDay===d),display:'flex',gap:6,alignItems:'center'}}>
+                  {d}{cnt>0&&<span style={{background:masterDay===d?'rgba(255,255,255,.3)':'var(--primary)',color:'#fff',borderRadius:99,padding:'0 6px',fontSize:10,fontWeight:700}}>{cnt}</span>}
+                </button>;
+              })}
+              <div style={{marginLeft:'auto',display:'flex',gap:8}}>
+                <button onClick={()=>setSubView('grid')} style={{padding:'6px 12px',borderRadius:8,border:`1.5px solid ${subView==='grid'?'var(--primary)':'var(--border)'}`,background:subView==='grid'?'var(--primary-light)':'var(--surface)',color:subView==='grid'?'var(--primary)':'var(--text2)',fontWeight:600,fontSize:12,cursor:'pointer',display:'flex',alignItems:'center',gap:5}}>
+                  <Icon name="grid" size={13} color={subView==='grid'?'var(--primary)':'var(--text3)'}/> Grid
+                </button>
+                <button onClick={()=>setSubView('list')} style={{padding:'6px 12px',borderRadius:8,border:`1.5px solid ${subView==='list'?'var(--primary)':'var(--border)'}`,background:subView==='list'?'var(--primary-light)':'var(--surface)',color:subView==='list'?'var(--primary)':'var(--text2)',fontWeight:600,fontSize:12,cursor:'pointer',display:'flex',alignItems:'center',gap:5}}>
+                  <Icon name="list" size={13} color={subView==='list'?'var(--primary)':'var(--text3)'}/> List
+                </button>
+              </div>
+            </div>
+
+            {(absences[masterDay]||[]).length===0?(
+              <div style={{textAlign:'center',padding:'60px 20px',color:'var(--text3)'}}>
+                <Icon name="check" size={40} color="#d1fae5" style={{display:'block',margin:'0 auto 12px'}}/>
+                <div style={{fontSize:15,fontWeight:600,color:'var(--text2)'}}>No absences on {masterDay}</div>
+                <div style={{fontSize:13,marginTop:4}}>Mark teachers absent in the Absences tab to see substitutes here.</div>
+              </div>
+            ):subView==='list'?(
+              // ── LIST VIEW ──
+              <div className="card" style={{overflow:'hidden'}}>
+                <div style={{padding:'14px 20px',borderBottom:'1px solid var(--border)',display:'flex',alignItems:'center',gap:8}}>
+                  <Icon name="swap" size={16} color="var(--primary)"/>
+                  <span style={{fontWeight:700,fontSize:15}}>Substitute Assignments — {masterDay}</span>
+                  <span style={{marginLeft:'auto',background:'var(--primary-light)',color:'var(--primary)',borderRadius:99,padding:'2px 10px',fontSize:11,fontWeight:700}}>{getSubList(masterDay).length} slots</span>
+                </div>
+                <table>
+                  <thead>
+                    <tr style={{background:'#f9fafb'}}>
+                      {['Period','Class','Subject','Absent Teacher','Substitute Teacher'].map(h=>(
+                        <th key={h} style={{padding:'10px 14px',textAlign:'left',color:'var(--text2)',fontWeight:600,fontSize:12}}>{h}</th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {getSubList(masterDay).length===0?(
+                      <tr><td colSpan="5" style={{padding:'30px',textAlign:'center',color:'var(--text3)'}}>No substitutes needed</td></tr>
+                    ):getSubList(masterDay).map((s,i)=>(
+                      <tr key={i} style={{background:i%2===0?'var(--surface)':'#fafbfc'}}>
+                        <td style={{padding:'10px 14px'}}>
+                          <span style={{background:'#1a1a2e',color:'#fff',borderRadius:6,padding:'3px 9px',fontSize:12,fontWeight:700}}>P{s.period}</span>
+                        </td>
+                        <td style={{padding:'10px 14px',fontWeight:700,color:'var(--text)'}}>{s.cls}</td>
+                        <td style={{padding:'10px 14px'}}>
+                          <span style={{background:gc(s.subject)+'15',color:gc(s.subject),borderRadius:6,padding:'3px 9px',fontSize:12,fontWeight:700}}>{s.subject}</span>
+                        </td>
+                        <td style={{padding:'10px 14px'}}>
+                          <div style={{display:'flex',alignItems:'center',gap:6}}>
+                            <span style={{width:7,height:7,borderRadius:'50%',background:'var(--red)',display:'inline-block'}}></span>
+                            <span style={{color:'var(--text2)',fontSize:13,textDecoration:'line-through'}}>{s.origTeacher}</span>
+                          </div>
+                        </td>
+                        <td style={{padding:'10px 14px'}}>
+                          <div style={{display:'flex',alignItems:'center',gap:6}}>
+                            <span style={{width:7,height:7,borderRadius:'50%',background:'var(--primary)',display:'inline-block'}}></span>
+                            <span style={{color:'var(--primary)',fontWeight:700,fontSize:13}}>{s.subTeacher}</span>
+                            {teachers.find(t=>t.name===s.subTeacher)?.isExtra&&<span style={{background:'var(--amber-light)',color:'var(--amber)',borderRadius:4,padding:'1px 6px',fontSize:10,fontWeight:700}}>POOL</span>}
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            ):(
+              // ── GRID VIEW ──
+              <div>
+                {(absences[masterDay]||[]).map(id=>{
+                  const teacher=gT(id);if(!teacher)return null;
+                  const slots=getSubList(masterDay).filter(s=>s.origTeacher===teacher.name);
+                  return(
+                    <div key={id} className="card" style={{marginBottom:14,overflow:'hidden'}}>
+                      <div style={{padding:'12px 16px',background:'var(--red-light)',borderBottom:'1px solid #fecaca',display:'flex',alignItems:'center',gap:10}}>
+                        <div style={{width:34,height:34,borderRadius:10,background:'var(--red)',display:'flex',alignItems:'center',justifyContent:'center',color:'#fff',fontWeight:700,fontSize:14}}>
+                          {teacher.name.split(' ').map(w=>w[0]).slice(0,2).join('')}
+                        </div>
+                        <div>
+                          <div style={{fontWeight:700,fontSize:14,color:'var(--red)'}}>{teacher.name}</div>
+                          <div style={{fontSize:11,color:'var(--text3)'}}>Absent — {slots.length} period{slots.length!==1?'s':''} to cover</div>
+                        </div>
+                      </div>
+                      <div style={{padding:14,display:'flex',flexWrap:'wrap',gap:10}}>
+                        {slots.map((s,i)=>(
+                          <div key={i} style={{borderRadius:10,border:'1px solid var(--border)',padding:'10px 14px',minWidth:180,background:'var(--surface)'}}>
+                            <div style={{display:'flex',alignItems:'center',gap:6,marginBottom:6}}>
+                              <span style={{background:'#1a1a2e',color:'#fff',borderRadius:5,padding:'2px 8px',fontSize:11,fontWeight:700}}>P{s.period}</span>
+                              <span style={{fontWeight:700,fontSize:13}}>{s.cls}</span>
+                              <span style={{background:gc(s.subject)+'15',color:gc(s.subject),borderRadius:5,padding:'2px 7px',fontSize:11,fontWeight:700,marginLeft:'auto'}}>{s.subject}</span>
+                            </div>
+                            <div style={{display:'flex',alignItems:'center',gap:5,fontSize:12,color:'var(--primary)',fontWeight:600}}>
+                              <Icon name="swap" size={12} color="var(--primary)"/>
+                              {s.subTeacher}
+                              {teachers.find(t=>t.name===s.subTeacher)?.isExtra&&<span style={{background:'var(--amber-light)',color:'var(--amber)',borderRadius:4,padding:'1px 5px',fontSize:9,fontWeight:700}}>POOL</span>}
+                            </div>
+                          </div>
+                        ))}
+                        {slots.length===0&&<div style={{color:'var(--text3)',fontSize:13,padding:'8px 0'}}>No substitutes assigned</div>}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* ══ ABSENCE ══ */}
+        {tab==='absence'&&(
+          <div>
+            <div className="card" style={{padding:20,marginBottom:16}}>
+              <div style={{fontWeight:700,fontSize:15,marginBottom:16,display:'flex',alignItems:'center',gap:8}}>
+                <Icon name="userX" size={16} color="var(--primary)"/> Mark Teacher Absences
+              </div>
+              <div style={{display:'flex',flexWrap:'wrap',gap:6,marginBottom:16}}>
+                {DAYS.map(d=>{
+                  const cnt=(absences[d]||[]).length;
+                  return<button key={d} onClick={()=>setAbsDay(d)} style={{...dayBtnStyle(d,absDay===d),display:'flex',alignItems:'center',gap:5}}>
+                    {d}{cnt>0&&<span style={{background:absDay===d?'rgba(255,255,255,.35)':'var(--red)',color:'#fff',borderRadius:99,padding:'0 6px',fontSize:10,fontWeight:700}}>{cnt}</span>}
+                  </button>;
+                })}
+              </div>
+              {/* Search */}
+              <div style={{position:'relative',marginBottom:14}}>
+                <span style={{position:'absolute',left:12,top:'50%',transform:'translateY(-50%)'}}><Icon name="search" size={14} color="var(--text3)"/></span>
+                <input type="text" placeholder={`Search teacher on ${absDay}...`} value={search} onChange={e=>setSearch(e.target.value)}
+                  style={{width:'100%',padding:'9px 12px 9px 36px',border:'1.5px solid var(--border)',borderRadius:10,fontSize:13,outline:'none',background:'var(--surface2)',transition:'border-color .15s'}}
+                  onFocus={e=>e.target.style.borderColor='var(--primary)'}
+                  onBlur={e=>e.target.style.borderColor='var(--border)'}/>
+                {search&&<button onClick={()=>setSearch('')} style={{position:'absolute',right:10,top:'50%',transform:'translateY(-50%)',background:'none',border:'none',cursor:'pointer',padding:2}}><Icon name="x" size={13} color="var(--text3)"/></button>}
+              </div>
+              {/* Absent banner */}
+              {(absences[absDay]||[]).length>0&&(
+                <div style={{background:'var(--red-light)',border:'1px solid #fecaca',borderRadius:10,padding:'10px 14px',marginBottom:14,fontSize:12,color:'var(--red)',display:'flex',alignItems:'center',gap:6,flexWrap:'wrap'}}>
+                  <Icon name="alert" size={13} color="var(--red)"/>
+                  <strong>{(absences[absDay]||[]).length} absent on {absDay}:</strong>
+                  {(absences[absDay]||[]).map(id=>{
+                    const name=gT(id)?.name;
+                    return name&&<span key={id} style={{background:'#fee2e2',borderRadius:6,padding:'2px 8px',fontSize:11,display:'inline-flex',alignItems:'center',gap:4}}>
+                      {name}<button onClick={()=>toggleAbs(absDay,id)} style={{background:'none',border:'none',cursor:'pointer',padding:0,display:'flex'}}><Icon name="x" size={10} color="var(--red)"/></button>
+                    </span>;
+                  })}
+                </div>
+              )}
+              {/* Teacher buttons */}
+              <div style={{display:'flex',flexWrap:'wrap',gap:6}}>
+                {filtTeachers.length===0
+                  ?<div style={{color:'var(--text3)',fontSize:13,padding:'8px 0'}}>No teachers matching "{search}"</div>
+                  :filtTeachers.map(t=>{
+                    const isAbs=(absences[absDay]||[]).includes(t.id);
+                    return<button key={t.id} onClick={()=>toggleAbs(absDay,t.id)}
+                      style={{padding:'7px 14px',borderRadius:8,fontSize:12,fontWeight:600,border:`1.5px solid ${isAbs?'var(--red)':'var(--border)'}`,background:isAbs?'var(--red)':'var(--surface)',color:isAbs?'#fff':'var(--text2)',cursor:'pointer',display:'flex',alignItems:'center',gap:5}}>
+                      {isAbs?<Icon name="x" size={11} color="#fff"/>:<Icon name="check" size={11} color="var(--text3)"/>}
+                      {t.name}
+                      {t.isExtra&&<span style={{background:isAbs?'rgba(255,255,255,.2)':'var(--amber-light)',color:isAbs?'#fff':'var(--amber)',borderRadius:4,padding:'0 5px',fontSize:9,fontWeight:700}}>POOL</span>}
+                    </button>;
+                  })}
+              </div>
+            </div>
+            {/* Summary table */}
+            <div className="card" style={{overflow:'hidden'}}>
+              <div style={{padding:'13px 20px',borderBottom:'1px solid var(--border)',fontWeight:700,fontSize:14,display:'flex',alignItems:'center',gap:8}}>
+                <Icon name="list" size={15} color="var(--primary)"/> Weekly Absence Summary
+              </div>
+              <table>
+                <thead><tr style={{background:'#f9fafb'}}>
+                  <th style={{padding:'9px 14px',textAlign:'left',color:'var(--text2)',fontWeight:600,fontSize:12}}>Day</th>
+                  <th style={{padding:'9px 14px',textAlign:'left',color:'var(--text2)',fontWeight:600,fontSize:12}}>Absent Teachers</th>
+                </tr></thead>
+                <tbody>
+                  {DAYS.map(day=>{
+                    const list=(absences[day]||[]).map(id=>gT(id)?.name).filter(Boolean);
+                    return<tr key={day}>
+                      <td style={{padding:'9px 14px',fontWeight:600,width:110,fontSize:13}}>{day}</td>
+                      <td style={{padding:'9px 14px'}}>
+                        {list.length?<div style={{display:'flex',flexWrap:'wrap',gap:4}}>{list.map(n=><span key={n} style={{background:'var(--red-light)',color:'var(--red)',borderRadius:6,padding:'2px 9px',fontSize:11,fontWeight:600}}>{n}</span>)}</div>:<span style={{color:'var(--text3)',fontSize:12}}>All present</span>}
+                      </td>
+                    </tr>;
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+
+        {/* ══ TEACHERS MANAGEMENT ══ */}
+        {tab==='teachers'&&(
+          <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:18}}>
+            {/* Add extra/pool teachers */}
+            <div className="card" style={{padding:20}}>
+              <div style={{fontWeight:700,fontSize:15,marginBottom:4,display:'flex',alignItems:'center',gap:8}}>
+                <Icon name="userPlus" size={16} color="var(--primary)"/> Substitute Pool Teachers
+              </div>
+              <div style={{fontSize:12,color:'var(--text3)',marginBottom:16}}>These teachers are used first when a regular teacher is absent.</div>
+              <div style={{display:'flex',gap:8,marginBottom:14}}>
+                <input type="text" placeholder="Enter teacher full name..." value={newTeacherName} onChange={e=>setNewTeacherName(e.target.value)}
+                  onKeyDown={e=>e.key==='Enter'&&addExtraTeacher()}
+                  style={{flex:1,padding:'9px 12px',border:'1.5px solid var(--border)',borderRadius:9,fontSize:13,outline:'none',background:'var(--surface2)'}}
+                  onFocus={e=>e.target.style.borderColor='var(--primary)'}
+                  onBlur={e=>e.target.style.borderColor='var(--border)'}/>
+                <button onClick={addExtraTeacher} style={{padding:'9px 16px',borderRadius:9,background:'var(--primary)',color:'#fff',border:'none',fontSize:13,fontWeight:600,cursor:'pointer',display:'flex',alignItems:'center',gap:5}}>
+                  <Icon name="plus" size={14} color="#fff"/> Add
+                </button>
+              </div>
+              <div style={{display:'flex',flexDirection:'column',gap:6}}>
+                {extraTeachers.length===0?<div style={{color:'var(--text3)',fontSize:13,textAlign:'center',padding:'20px 0'}}>No pool teachers added yet.</div>
+                :extraTeachers.map(name=>(
+                  <div key={name} style={{display:'flex',alignItems:'center',gap:10,padding:'9px 12px',borderRadius:9,border:'1px solid var(--border)',background:'var(--surface)'}}>
+                    <div style={{width:30,height:30,borderRadius:8,background:'var(--amber-light)',display:'flex',alignItems:'center',justifyContent:'center',color:'var(--amber)',fontWeight:700,fontSize:12}}>
+                      {name.split(' ').map(w=>w[0]).slice(0,2).join('')}
+                    </div>
+                    <span style={{flex:1,fontSize:13,fontWeight:500}}>{name}</span>
+                    <span style={{background:'var(--amber-light)',color:'var(--amber)',borderRadius:5,padding:'1px 7px',fontSize:10,fontWeight:700}}>POOL</span>
+                    <button onClick={()=>removeExtraTeacher(name)} style={{background:'none',border:'none',cursor:'pointer',padding:4,borderRadius:6,display:'flex'}}><Icon name="trash" size={13} color="var(--text3)"/></button>
+                  </div>
+                ))}
+              </div>
+            </div>
+            {/* All assigned teachers */}
+            <div className="card" style={{padding:20}}>
+              <div style={{fontWeight:700,fontSize:15,marginBottom:4,display:'flex',alignItems:'center',gap:8}}>
+                <Icon name="users" size={16} color="var(--blue)"/> Assigned Teachers
+              </div>
+              <div style={{fontSize:12,color:'var(--text3)',marginBottom:14}}>Teachers assigned to specific classes and subjects.</div>
+              <div style={{display:'flex',flexDirection:'column',gap:5,maxHeight:440,overflowY:'auto'}}>
+                {teachers.filter(t=>!t.isExtra).map((t,i)=>{
+                  const subjects=[];
+                  Object.entries(assignments).forEach(([cls,subjs])=>{
+                    Object.entries(subjs).forEach(([subj,tName])=>{
+                      if(tName===t.name)subjects.push(`${cls}/${subj}`);
+                    });
+                  });
+                  return(
+                    <div key={t.id} style={{display:'flex',alignItems:'center',gap:10,padding:'8px 12px',borderRadius:9,border:'1px solid var(--border)',background:i%2===0?'var(--surface)':'#fafbfc'}}>
+                      <div style={{width:30,height:30,borderRadius:8,background:'var(--blue-light)',display:'flex',alignItems:'center',justifyContent:'center',color:'var(--blue)',fontWeight:700,fontSize:12}}>
+                        {t.name.split(' ').map(w=>w[0]).slice(0,2).join('')}
+                      </div>
+                      <div style={{flex:1}}>
+                        <div style={{fontSize:13,fontWeight:600}}>{t.name}</div>
+                        <div style={{fontSize:10,color:'var(--text3)',marginTop:1}}>{subjects.slice(0,4).join(', ')}{subjects.length>4?` +${subjects.length-4} more`:''}</div>
+                      </div>
+                      <span style={{background:'var(--blue-light)',color:'var(--blue)',borderRadius:5,padding:'1px 7px',fontSize:10,fontWeight:700}}>{subjects.length} cls</span>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ══ TIMINGS ══ */}
+        {tab==='timings'&&(
+          <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:18}}>
+            {[{label:'Regular Days (Mon–Thu, Sat)',key:'regular'},{label:'Friday',key:'friday'}].map(({label,key})=>(
+              <div key={key} className="card" style={{padding:20}}>
+                <div style={{fontWeight:700,fontSize:14,marginBottom:16,display:'flex',alignItems:'center',gap:8}}>
+                  <Icon name="settings" size={15} color="var(--primary)"/> {label}
+                </div>
+                {timings[key].map((t,idx)=>(
+                  <div key={idx} style={{display:'flex',alignItems:'center',gap:10,marginBottom:10}}>
+                    <span style={{fontSize:12,color:'var(--text2)',minWidth:60,fontWeight:600}}>P{idx+1}</span>
+                    <input type="time" value={t.start} onChange={e=>{const u=[...timings[key]];u[idx]={...u[idx],start:e.target.value};setTimings({...timings,[key]:u});}}
+                      style={{padding:'6px 10px',border:'1.5px solid var(--border)',borderRadius:8,fontSize:12,outline:'none',fontFamily:'DM Mono,monospace'}}/>
+                    <span style={{color:'var(--text3)'}}>→</span>
+                    <input type="time" value={t.end} onChange={e=>{const u=[...timings[key]];u[idx]={...u[idx],end:e.target.value};setTimings({...timings,[key]:u});}}
+                      style={{padding:'6px 10px',border:'1.5px solid var(--border)',borderRadius:8,fontSize:12,outline:'none',fontFamily:'DM Mono,monospace'}}/>
+                  </div>
+                ))}
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* ══ WORKLOAD ══ */}
+        {tab==='workload'&&(
+          <div className="card" style={{overflow:'hidden'}}>
+            <div style={{padding:'14px 20px',borderBottom:'1px solid var(--border)',fontWeight:700,fontSize:15,display:'flex',alignItems:'center',gap:8}}>
+              <Icon name="book" size={16} color="var(--primary)"/> Weekly Teacher Workload
+            </div>
+            <table>
+              <thead>
+                <tr style={{background:'#1a1a2e'}}>
+                  {['#','Teacher','Type','Base Periods','Substitutions','Total'].map(h=>(
+                    <th key={h} style={{padding:'10px 16px',textAlign:'left',fontWeight:600,color:'#fff',fontSize:12}}>{h}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {teachers.map((t,ti)=>{
+                  let reg=0,subs=0;
+                  DAYS.forEach(d=>{
+                    const maxP=d==='Friday'?5:7;
+                    for(let p=1;p<=maxP;p++){classes.forEach(c=>{const sl=dispTT[d]?.[p]?.[c];if(sl?.teacherId===t.id)sl.isSub?subs++:reg++;});}
+                  });
+                  return(
+                    <tr key={t.id} style={{background:ti%2===0?'var(--surface)':'#fafbfc'}}>
+                      <td style={{padding:'9px 16px',color:'var(--text3)',fontSize:11}}>{ti+1}</td>
+                      <td style={{padding:'9px 16px'}}>
+                        <div style={{display:'flex',alignItems:'center',gap:8}}>
+                          <div style={{width:28,height:28,borderRadius:7,background:t.isExtra?'var(--amber-light)':'var(--blue-light)',display:'flex',alignItems:'center',justifyContent:'center',color:t.isExtra?'var(--amber)':'var(--blue)',fontWeight:700,fontSize:11}}>
+                            {t.name.split(' ').map(w=>w[0]).slice(0,2).join('')}
+                          </div>
+                          <span style={{fontWeight:600,fontSize:13}}>{t.name}</span>
+                        </div>
+                      </td>
+                      <td style={{padding:'9px 16px'}}>
+                        <span style={{background:t.isExtra?'var(--amber-light)':'var(--blue-light)',color:t.isExtra?'var(--amber)':'var(--blue)',borderRadius:5,padding:'2px 8px',fontSize:11,fontWeight:700}}>
+                          {t.isExtra?'POOL':'ASSIGNED'}
+                        </span>
+                      </td>
+                      <td style={{padding:'9px 16px'}}><span style={{background:'#dbeafe',color:'#1d4ed8',borderRadius:99,padding:'2px 12px',fontWeight:700,fontSize:12}}>{reg}</span></td>
+                      <td style={{padding:'9px 16px'}}><span style={{background:subs>0?'var(--primary-light)':'#f9fafb',color:subs>0?'var(--primary)':'var(--text3)',borderRadius:99,padding:'2px 12px',fontWeight:700,fontSize:12}}>+{subs}</span></td>
+                      <td style={{padding:'9px 16px'}}><span style={{background:'#dcfce7',color:'#15803d',borderRadius:99,padding:'2px 12px',fontWeight:700,fontSize:12}}>{reg+subs}</span></td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        )}
+
+      </main>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>
